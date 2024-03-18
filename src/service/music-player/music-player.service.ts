@@ -20,6 +20,8 @@ export class MusicPlayerService {
     const voiceChannel = message.member.voice.channel;
     if (voiceChannel) {
       this.joinVoiceChannelAndPlayAudio(voiceChannel, url);
+      const videoTitle = await this.getVideoTitle(url);
+      return message.reply(`En cours de lecture : ${videoTitle}`);
     } else {
       return message.reply(
         'Vous devez être dans un canal vocal pour jouer de la musique.',
@@ -33,7 +35,7 @@ export class MusicPlayerService {
 
     this.stopPlayerIfPlaying();
     this.disconnectVoiceConnectionIfConnected(message);
-    return message.send('La musique a été arrêtée.');
+    return message.reply('La musique a été arrêtée.');
   }
 
   private extractUrlFromMessageContent(content: string): string {
@@ -55,6 +57,16 @@ export class MusicPlayerService {
     const resource = createAudioResource(stream);
     this.player.play(resource);
     this.connection.subscribe(this.player);
+  }
+
+  async getVideoTitle(url) {
+    try {
+      const info = await ytdl.getInfo(url);
+      return info.videoDetails.title;
+    } catch (error) {
+      console.error('Error fetching video title:', error);
+      return null;
+    }
   }
 
   private disconnectVoiceConnectionIfConnected(message) {
