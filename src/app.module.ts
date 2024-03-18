@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { DiscordConfigService } from './service/discord-config/discord-config.service';
 import { MusicPlayerService } from './service/music-player/music-player.service';
-import { DiscordHandleCommandsService } from './service/discord-handle-commands/discord-handle-commands.service';
+import { AppService } from './app.service';
 import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
 import { YoutubeService } from './service/youtube-service/youtube-service.service';
 
@@ -12,7 +12,7 @@ import { YoutubeService } from './service/youtube-service/youtube-service.servic
   providers: [
     DiscordConfigService,
     MusicPlayerService,
-    DiscordHandleCommandsService,
+    AppService,
     VoiceConnectionService,
     YoutubeService,
   ],

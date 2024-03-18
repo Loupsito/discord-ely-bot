@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { MusicPlayerService } from '../music-player/music-player.service';
+import { MusicPlayerService } from './service/music-player/music-player.service';
 
 @Injectable()
-export class DiscordHandleCommandsService {
+export class AppService {
   constructor(private musicPlayerService: MusicPlayerService) {}
 
   async handleMessageCreate(message) {

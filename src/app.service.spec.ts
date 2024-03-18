@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DiscordHandleCommandsService } from './discord-handle-commands.service';
+import { AppService } from './app.service';
 
 describe('DiscordHandleCommandsService', () => {
-  let service: DiscordHandleCommandsService;
+  let service: AppService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DiscordHandleCommandsService],
+      providers: [AppService],
     }).compile();
 
-    service = module.get<DiscordHandleCommandsService>(DiscordHandleCommandsService);
+    service = module.get<AppService>(AppService);
   });
 
   it('should be defined', () => {

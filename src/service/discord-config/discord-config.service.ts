@@ -1,11 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { MusicPlayerService } from '../music-player/music-player.service';
-import { DiscordHandleCommandsService } from '../discord-handle-commands/discord-handle-commands.service';
+import { AppService } from '../../app.service';
 
 @Injectable()
 export class DiscordConfigService implements OnModuleInit {
-  constructor(private musicPlayerService: MusicPlayerService, private discordHandleCommandsService: DiscordHandleCommandsService) {}
+  constructor(private musicPlayerService: MusicPlayerService, private discordHandleCommandsService: AppService) {}
 
   private readonly client = new Client({
     intents: [
