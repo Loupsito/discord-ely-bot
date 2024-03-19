@@ -13,6 +13,6 @@ export class YoutubeService {
     }
   }
   getStream(url: string) {
-    return ytdl(url, { filter: 'audioonly' });
+    return ytdl(url, { filter: 'audioonly', highWaterMark: 32 * 1024 * 1024 });
   }
 }
