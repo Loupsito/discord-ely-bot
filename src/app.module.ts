@@ -5,9 +5,10 @@ import { MusicPlayerService } from './service/music-player/music-player.service'
 import { AppService } from './app.service';
 import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
 import { YoutubeService } from './service/youtube-service/youtube-service.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [DiscoveryModule],
+  imports: [DiscoveryModule, ConfigModule.forRoot()],
   controllers: [],
   providers: [
     DiscordConfigService,

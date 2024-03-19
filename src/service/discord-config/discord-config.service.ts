@@ -2,10 +2,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { MusicPlayerService } from '../music-player/music-player.service';
 import { AppService } from '../../app.service';
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class DiscordConfigService implements OnModuleInit {
-  constructor(private musicPlayerService: MusicPlayerService, private discordHandleCommandsService: AppService) {}
+  constructor(private musicPlayerService: MusicPlayerService, private discordHandleCommandsService: AppService, private configService: ConfigService) {}
 
   private readonly client = new Client({
     intents: [
@@ -26,8 +27,7 @@ export class DiscordConfigService implements OnModuleInit {
       this.discordHandleCommandsService.handleMessageCreate.bind(this),
     );
 
-    await this.client.login(
-      'token',
-    );
+    const token = this.configService.get<string>('DISCORD_TOKEN');
+    await this.client.login(token);
   }
 }
