@@ -7,10 +7,11 @@ import { VoiceConnectionService } from './service/voice-connection-service/voice
 import { YoutubeService } from './service/youtube-service/youtube-service.service';
 import { ConfigModule } from '@nestjs/config';
 import { HealthController } from './health/health.controller';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [DiscoveryModule, ConfigModule.forRoot()],
-  controllers: [HealthController],
+  controllers: [HealthController, AppController],
   providers: [
     DiscordConfigService,
     MusicPlayerService,
