@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { MusicPlayerService } from '../music-player/music-player.service';
 import { AppService } from '../../app.service';
-import { ConfigService } from "@nestjs/config";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DiscordConfigService implements OnModuleInit {
