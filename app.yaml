@@ -1,4 +1,4 @@
-runtime: nodejs20  # Assurez-vous que cette version correspond à celle que vous utilisez.
+runtime: nodejs16  # Assurez-vous que cette version correspond à celle que vous utilisez.
 env: standard
 instance_class: F1  # Utilise la classe d'instance la moins chère.
 
