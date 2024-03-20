@@ -14,6 +14,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2  # Récupère le code du dépôt
 
+      - uses: 73h/gae-app-yaml-replace-env-variables@v0.3
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        with:
+          app_yaml_path: "app.yaml"
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -39,5 +45,3 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           deliverables: app.yaml
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
