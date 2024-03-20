@@ -2,14 +2,8 @@ runtime: nodejs18  # Assurez-vous que cette version correspond à celle que vous
 env: standard
 instance_class: F1  # Utilise la classe d'instance la moins chère.
 
-automatic_scaling:
-  max_instances: 1  # Limite à une seule instance.
-  target_cpu_utilization: 0.5  # Mise à l'échelle basée sur l'utilisation du CPU.
-  target_throughput_utilization: 0.5  # Mise à l'échelle basée sur le débit.
-  min_idle_instances: 0  # Réduit les instances inactives pour économiser des ressources.
-  max_idle_instances: 1  # Limite les instances inactives.
-  min_pending_latency: 30ms  # Temps d'attente minimal avant de commencer à traiter une requête.
-  max_pending_latency: automatic  # Gère automatiquement la latence maximale.
+manual_scaling:
+  instances: 1  # Garde toujours une instance en cours d'exécution.
 
 # Configuration des variables d'environnement de votre application.
 env_variables:
