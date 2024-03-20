@@ -14,3 +14,4 @@ automatic_scaling:
 # Configuration des variables d'environnement de votre application.
 env_variables:
   NODE_ENV: 'production'
+  DISCORD_TOKEN: $DISCORD_TOKEN
