@@ -2,8 +2,6 @@ runtime: nodejs18  # Assurez-vous que cette version correspond à celle que vous
 env: standard
 instance_class: F1  # Utilise la classe d'instance la moins chère.
 
-entrypoint: 'npm run start'
-
 automatic_scaling:
   max_instances: 1  # Limite à une seule instance.
   target_cpu_utilization: 0.5  # Mise à l'échelle basée sur l'utilisation du CPU.
