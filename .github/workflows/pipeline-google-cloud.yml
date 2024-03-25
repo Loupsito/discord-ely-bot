@@ -32,8 +32,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest .
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest
+          docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest .
+          docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest
 
 #      - name: Set up kubectl
 #        run: gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --region ${{ secrets.GKE_REGION }} --project ${{ secrets.GKE_PROJECT }}
@@ -51,4 +51,4 @@ jobs:
 
 #      - name: Deploy to GKE
 #        run: |
-#          kubectl set image deployment/discord-bot-deployment discord-bot-container=gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest
+#          kubectl set image deployment/discord-bot-deployment discord-bot-container=eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest
