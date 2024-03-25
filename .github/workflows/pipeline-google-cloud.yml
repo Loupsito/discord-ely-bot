@@ -1,47 +1,50 @@
-name: CI/CD Workflow
+name: Deploy to GKE
 
 on:
   push:
-    branches: [ master ]  # Déclenche le workflow sur les push vers la branche master
-  pull_request:
-    branches: [ master ]  # Déclenche le workflow sur les pull requests vers la branche master
+    branches:
+      - master  # Déclenche le workflow sur les push vers la branche master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # Exécute le job sur la dernière version d'Ubuntu
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2  # Récupère le code du dépôt
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - uses: 73h/gae-app-yaml-replace-env-variables@v0.3
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
         with:
-          app_yaml_path: "app.yaml"
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'  # Spécifiez la version de Node.js
-
-      - name: Install Dependencies
-        run: npm install  # Installe les dépendances de votre projet
-
-      - name: Run Tests
-        run: npm run test  # Remplacez par votre commande de test
-
-      - name: Build
-        run: npm run build  # Construit votre projet, si nécessaire
-
-      - name: Set up Google Cloud
-        uses: google-github-actions/setup-gcloud@v0.2.0
-        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
-      - name: Deploy to Google Cloud
-        uses: google-github-actions/deploy-appengine@v0.2.0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          deliverables: app.yaml
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest .
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest
+
+#      - name: Set up kubectl
+#        run: gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --region ${{ secrets.GKE_REGION }} --project ${{ secrets.GKE_PROJECT }}
+
+      - name: Configure kubectl
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v1
+
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f deployment/deployment.yaml
+
+#      - name: Deploy to GKE
+#        run: |
+#          kubectl set image deployment/discord-bot-deployment discord-bot-container=gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot-discord:latest

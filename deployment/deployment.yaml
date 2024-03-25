@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot-deployment  # your-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: discord-bot  # your-app
+  template:
+    metadata:
+      labels:
+        app: discord-bot  # your-app
+    spec:
+      containers:
+        - name: discord-bot-container  # your-container
+          image: gcr.io/third-campus-417718/discord-bot:latest
+          ports:
+            - containerPort: 80
