@@ -28,7 +28,7 @@ jobs:
         run: 'gcloud info'
 
       - name: Configure Docker
-        run: gcloud auth configure-docker
+        run: gcloud auth configure-docker eu.gcr.io
 
       - name: Build and push Docker image
         run: |
