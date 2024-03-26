@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
 import { MusicPlayerService } from './service/music-player/music-player.service';
-import { VoiceConnectionService } from "./service/voice-connection-service/voice-connection-service.service";
-import { YoutubeService } from "./service/youtube-service/youtube-service.service";
+import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
+import { YoutubeService } from './service/youtube-service/youtube-service.service';
 
 describe('AppService', () => {
   let appService: AppService;

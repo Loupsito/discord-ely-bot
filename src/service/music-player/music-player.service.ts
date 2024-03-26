@@ -33,8 +33,9 @@ export class MusicPlayerService {
   }
 
   stop(message: any) {
-    if (!message.guild)
+    if (!message.guild) {
       return message.reply("Erreur : Vous n'êtes pas dans un serveur.");
+    }
 
     if (this.player.state.status !== AudioPlayerStatus.Idle) {
       this.player.stop();

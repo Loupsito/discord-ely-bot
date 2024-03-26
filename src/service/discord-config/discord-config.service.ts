@@ -6,7 +6,10 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DiscordConfigService implements OnModuleInit {
-  constructor(private musicPlayerService: MusicPlayerService, private discordHandleCommandsService: AppService, private configService: ConfigService) {}
+  constructor(
+    private discordHandleCommandsService: AppService,
+    private configService: ConfigService,
+  ) {}
 
   private readonly client = new Client({
     intents: [
