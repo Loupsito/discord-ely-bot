@@ -39,10 +39,12 @@ jobs:
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Create Kubernetes secret
+      - name: Configure Kubernetes secret
         run: |
           kubectl create secret generic discord-bot-secret \
             --from-literal=DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
       - name: Deploy to GKE
         run: |
