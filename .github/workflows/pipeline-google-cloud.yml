@@ -41,6 +41,7 @@ jobs:
 
       - name: Configure Kubernetes secret
         run: |
+          kubectl delete secret discord-bot-secret --ignore-not-found
           kubectl create secret generic discord-bot-secret \
             --from-literal=DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
         env:
