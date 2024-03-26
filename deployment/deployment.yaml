@@ -17,3 +17,9 @@ spec:
           image: eu.gcr.io/third-campus-417718/bot-discord:latest
           ports:
             - containerPort: 80
+          env:
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: discord-bot-secret
+                  key: DISCORD_TOKEN
