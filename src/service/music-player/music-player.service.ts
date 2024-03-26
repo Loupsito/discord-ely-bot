@@ -18,24 +18,21 @@ export class MusicPlayerService {
   ) {}
 
   async play(message: any) {
+    this.replyErrorMessageIfNotInVoiceChannel(message);
+
     const url = this.extractUrlFromMessageContent(message.content);
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) {
-      return message.reply(
-        'Vous devez être dans un canal vocal pour jouer de la musique.',
-      );
-    }
+    this.voiceConnectionService.joinAndPlay(
+      message.member.voice.channel,
+      url,
+      this.player,
+    );
 
     const videoTitle = await this.youtubeService.getVideoTitle(url);
-    this.voiceConnectionService.joinAndPlay(voiceChannel, url, this.player);
-
     return message.reply(`**En cours de lecture :** ${videoTitle}`);
   }
 
   stop(message: any) {
-    if (!message.guild) {
-      return message.reply("Erreur : Vous n'êtes pas dans un serveur.");
-    }
+    this.replyErrorMessageIfNotInVoiceChannel(message);
 
     if (this.player.state.status !== AudioPlayerStatus.Idle) {
       this.player.stop();
@@ -50,5 +47,14 @@ export class MusicPlayerService {
       throw new Error('Missing URL argument for play command');
     }
     return commands[1];
+  }
+
+  private replyErrorMessageIfNotInVoiceChannel(message) {
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) {
+      return message.reply(
+        'Vous devez être dans un canal vocal pour utiliser cette commande',
+      );
+    }
   }
 }
