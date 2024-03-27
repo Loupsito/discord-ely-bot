@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { MusicPlayerService } from './service/music-player/music-player.service';
+import { DiscordService } from './service/discord/discord.service';
 
 @Injectable()
 export class AppService {
-  constructor(private musicPlayerService: MusicPlayerService) {}
+  constructor(
+    private readonly discordService: DiscordService,
+    private musicPlayerService: MusicPlayerService,
+  ) {}
 
   async handleMessageCreate(message) {
     if (!message.guild) {
@@ -19,5 +23,12 @@ export class AppService {
       console.log('discord command !stop used');
       await this.musicPlayerService.stop(message);
     }
+  }
+
+  async onModuleInit() {
+    this.discordService.discordClient.on(
+      'messageCreate',
+      this.handleMessageCreate.bind(this),
+    );
   }
 }
