@@ -1,13 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { MusicPlayerService } from './service/music-player/music-player.service';
 import { DiscordService } from './service/discord/discord.service';
+import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly discordService: DiscordService,
     private musicPlayerService: MusicPlayerService,
+    private voiceConnectionService: VoiceConnectionService,
   ) {}
+
+  async onModuleInit() {
+    this.discordService.discordClient.on(
+      'messageCreate',
+      this.handleMessageCreate.bind(this),
+    );
+  }
 
   async handleMessageCreate(message) {
     if (!message.guild) {
@@ -23,12 +32,9 @@ export class AppService {
       console.log('discord command !stop used');
       await this.musicPlayerService.stop(message);
     }
-  }
 
-  async onModuleInit() {
-    this.discordService.discordClient.on(
-      'messageCreate',
-      this.handleMessageCreate.bind(this),
-    );
+    if (message.content.startsWith('!disconnect')) {
+      this.voiceConnectionService.disconnect(message);
+    }
   }
 }

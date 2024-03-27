@@ -37,7 +37,6 @@ export class MusicPlayerService {
     if (this.player.state.status !== AudioPlayerStatus.Idle) {
       this.player.stop();
     }
-    this.voiceConnectionService.disconnect(message);
     return message.reply('La musique a été arrêtée.');
   }
 
