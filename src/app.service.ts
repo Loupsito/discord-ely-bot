@@ -35,6 +35,7 @@ export class AppService {
 
     if (message.content.startsWith('!disconnect')) {
       this.voiceConnectionService.disconnect(message);
+      return message.reply('Bye bye 👋');
     }
   }
 }
