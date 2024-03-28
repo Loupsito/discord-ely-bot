@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { MusicPlayerService } from './service/music-player/music-player.service';
 import { DiscordService } from './service/discord/discord.service';
 import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
+import { COMMANDS } from './discord-command.type';
+import { MESSAGES } from './discord-messages.type';
 
 @Injectable()
 export class AppService {
@@ -20,22 +22,26 @@ export class AppService {
 
   async handleMessageCreate(message) {
     if (!message.guild) {
-      return message.reply("Erreur : Vous n'êtes pas dans un serveur.");
+      return message.reply(MESSAGES.NOT_IN_SERVER);
     }
 
-    if (message.content.startsWith('!play')) {
-      console.log('discord command !play used');
-      await this.musicPlayerService.play(message);
-    }
+    const command = message.content.split(' ')[0]; // Prendre la première partie de la commande
 
-    if (message.content.startsWith('!stop')) {
-      console.log('discord command !stop used');
-      await this.musicPlayerService.stop(message);
-    }
-
-    if (message.content.startsWith('!disconnect')) {
-      this.voiceConnectionService.disconnect(message);
-      return message.reply('Bye bye 👋');
+    switch (command) {
+      case COMMANDS.PLAY:
+        console.log('discord command !play used');
+        await this.musicPlayerService.play(message);
+        break;
+      case COMMANDS.STOP:
+        console.log('discord command !stop used');
+        await this.musicPlayerService.stop(message);
+        break;
+      case COMMANDS.DISCONNECT:
+        this.voiceConnectionService.disconnect(message);
+        message.reply(MESSAGES.BYE);
+        break;
+      default:
+        break;
     }
   }
 }
