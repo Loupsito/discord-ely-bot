@@ -4,6 +4,7 @@ import { DiscordService } from './service/discord/discord.service';
 import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
 import { COMMANDS } from './discord-command.type';
 import { MESSAGES } from './discord-messages.type';
+import { logCommand } from './infrastructure/discord-commands.interceptor';
 
 @Injectable()
 export class AppService {
@@ -25,15 +26,14 @@ export class AppService {
       return message.reply(MESSAGES.NOT_IN_SERVER);
     }
 
-    const command = message.content.split(' ')[0]; // Prendre la première partie de la commande
+    const command = message.content.split(' ')[0];
+    logCommand(command, message);
 
     switch (command) {
       case COMMANDS.PLAY:
-        console.log('discord command !play used');
         await this.musicPlayerService.play(message);
         break;
       case COMMANDS.STOP:
-        console.log('discord command !stop used');
         await this.musicPlayerService.stop(message);
         break;
       case COMMANDS.DISCONNECT:
