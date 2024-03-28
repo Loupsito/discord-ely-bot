@@ -1,12 +1,12 @@
 interface DiscordCommandType {
-  triggerCommand: string;
+  trigger: string;
   description: string;
 }
 
 type DiscordCommand = 'PLAY' | 'STOP' | 'DISCONNECT';
 
 export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
-  PLAY: { triggerCommand: '!play', description: '' },
-  STOP: { triggerCommand: '!stop', description: '' },
-  DISCONNECT: { triggerCommand: '!disconnect', description: '' },
+  PLAY: { trigger: '!play', description: '' },
+  STOP: { trigger: '!stop', description: '' },
+  DISCONNECT: { trigger: '!disconnect', description: '' },
 };

@@ -7,6 +7,7 @@ import {
   createAudioResource,
 } from '@discordjs/voice';
 import { YoutubeService } from '../youtube-service/youtube-service.service';
+import { MESSAGES } from '../../discord-messages.type';
 
 @Injectable()
 export class VoiceConnectionService {
@@ -34,6 +35,7 @@ export class VoiceConnectionService {
     ) {
       this.connection.destroy();
       this.connection = null;
+      message.reply(MESSAGES.BYE);
     } else {
       return message.reply('Je ne suis actuellement pas dans un canal vocal.');
     }

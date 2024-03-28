@@ -3,7 +3,6 @@ import { MusicPlayerService } from './service/music-player/music-player.service'
 import { DiscordService } from './service/discord/discord.service';
 import { VoiceConnectionService } from './service/voice-connection-service/voice-connection-service.service';
 import { COMMANDS } from './discord-command.type';
-import { MESSAGES } from './discord-messages.type';
 import { logCommand } from './infrastructure/discord-commands.interceptor';
 
 @Injectable()
@@ -22,26 +21,19 @@ export class AppService {
   }
 
   async handleMessageCreate(message) {
-    if (!message.guild) {
-      return message.reply(MESSAGES.NOT_IN_SERVER);
-    }
+    const commandActions = {
+      [COMMANDS.PLAY.trigger]: () => this.musicPlayerService.play(message),
+      [COMMANDS.STOP.trigger]: () => this.musicPlayerService.stop(message),
+      [COMMANDS.DISCONNECT.trigger]: () =>
+        this.voiceConnectionService.disconnect(message),
+    };
 
     const command = message.content.split(' ')[0];
-    logCommand(command, message);
+    const action = commandActions[command];
 
-    switch (command) {
-      case COMMANDS.PLAY:
-        await this.musicPlayerService.play(message);
-        break;
-      case COMMANDS.STOP:
-        await this.musicPlayerService.stop(message);
-        break;
-      case COMMANDS.DISCONNECT:
-        this.voiceConnectionService.disconnect(message);
-        message.reply(MESSAGES.BYE);
-        break;
-      default:
-        break;
+    if (action) {
+      logCommand(command, message);
+      await action();
     }
   }
 }
