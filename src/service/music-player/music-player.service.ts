@@ -20,15 +20,18 @@ export class MusicPlayerService {
   async play(message: any) {
     this.replyErrorMessageIfNotInVoiceChannel(message);
 
-    const url = this.extractUrlFromMessageContent(message.content);
-    this.voiceConnectionService.joinAndPlay(
-      message.member.voice.channel,
-      url,
-      this.player,
-    );
-
-    const videoTitle = await this.youtubeService.getVideoTitle(url);
-    return message.reply(`**En cours de lecture :** ${videoTitle}`);
+    try {
+      const url = await this.extractUrlFromMessageContent(message);
+      this.voiceConnectionService.joinAndPlay(
+        message.member.voice.channel,
+        url,
+        this.player,
+      );
+      const videoTitle = await this.youtubeService.getVideoTitle(url);
+      return message.reply(`**En cours de lecture :** ${videoTitle}`);
+    } catch (error) {
+      message.reply(error);
+    }
   }
 
   stop(message: any) {
@@ -40,12 +43,22 @@ export class MusicPlayerService {
     return message.reply('La musique a été arrêtée.');
   }
 
-  private extractUrlFromMessageContent(content: string): string {
-    const commands = content.split(' ');
-    if (commands.length < 2) {
-      throw new Error('Missing URL argument for play command');
-    }
-    return commands[1];
+  private extractUrlFromMessageContent(message): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const commands = message.content.split(' ');
+
+      if (commands.length < 2) {
+        reject(
+          `Il faut fournir une URL Youtube.\n **Exemple :** !play https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
+        );
+      }
+
+      if (!this.youtubeService.isYoutubeUrl(commands[1])) {
+        reject('Il faut fournir une URL Youtube');
+      }
+
+      resolve(commands[1]);
+    });
   }
 
   private replyErrorMessageIfNotInVoiceChannel(message) {
