@@ -1,59 +1,95 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
+import { DiscordService } from './service/discord/discord.service';
 import { MusicPlayerService } from './service/music-player/music-player.service';
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
-import { YoutubeService } from './service/youtube/youtube-service.service';
+import { HelpService } from './service/help/help.service';
+import { COMMANDS } from './discord-command.type';
 
-describe('AppService', () => {
-  let appService: AppService;
-  let musicPlayerService: MusicPlayerService;
+jest.mock('./service/discord/discord.service');
+jest.mock('./service/music-player/music-player.service');
+jest.mock('./service/voice-connection/voice-connection-service.service');
+jest.mock('./service/help/help.service');
+jest.mock('./infrastructure/discord-commands.interceptor', () => ({
+  logCommand: jest.fn(),
+}));
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AppService,
-        MusicPlayerService,
-        VoiceConnectionService,
-        YoutubeService,
-      ],
-    }).compile();
-    appService = module.get<AppService>(AppService);
-    musicPlayerService = module.get<MusicPlayerService>(MusicPlayerService);
+let appService: AppService;
+let discordService: DiscordService;
+let musicPlayerService: MusicPlayerService;
+let voiceConnectionService: VoiceConnectionService;
+let helpService: HelpService;
+
+beforeEach(async () => {
+  const discordClientMock = {
+    on: jest.fn(),
+  };
+  const module: TestingModule = await Test.createTestingModule({
+    providers: [
+      AppService,
+      {
+        provide: DiscordService,
+        useValue: {
+          discordClient: discordClientMock, // Utilisation du mock ici
+        },
+      },
+      MusicPlayerService,
+      VoiceConnectionService,
+      HelpService,
+    ],
+  }).compile();
+
+  appService = module.get<AppService>(AppService);
+  discordService = module.get<DiscordService>(DiscordService);
+  musicPlayerService = module.get<MusicPlayerService>(MusicPlayerService);
+  voiceConnectionService = module.get<VoiceConnectionService>(
+    VoiceConnectionService,
+  );
+  helpService = module.get<HelpService>(HelpService);
+});
+
+it('should attach messageCreate event listener on module init', async () => {
+  const onSpy = jest.spyOn(discordService.discordClient, 'on');
+  await appService.onModuleInit();
+  expect(onSpy).toHaveBeenCalledWith('messageCreate', expect.any(Function));
+});
+
+describe('handleMessageCreate', () => {
+  const mockMessage = (content: string) => ({
+    content,
+    // Add other necessary mock message properties here
   });
 
-  it('should handle !play message', async () => {
-    const mockMessage = {
-      guild: true,
-      content: '!play http://test.url',
-      reply: jest.fn(),
-    };
-    jest
-      .spyOn(musicPlayerService, 'play')
-      .mockImplementation(() => Promise.resolve());
-    await appService.handleMessageCreate(mockMessage);
-    expect(musicPlayerService.play).toHaveBeenCalledWith(mockMessage);
+  it('should call play on MUSIC command', async () => {
+    const message = mockMessage(COMMANDS.PLAY.trigger);
+    await appService.handleMessageCreate(message);
+    expect(musicPlayerService.play).toHaveBeenCalledWith(message);
   });
 
-  it('should handle !stop message', async () => {
-    const mockMessage = {
-      guild: true,
-      content: '!stop',
-      reply: jest.fn(),
-    };
-    jest
-      .spyOn(musicPlayerService, 'stop')
-      .mockImplementation(() => Promise.resolve());
-    await appService.handleMessageCreate(mockMessage);
-    expect(musicPlayerService.stop).toHaveBeenCalledWith(mockMessage);
+  it('should call stop on STOP command', async () => {
+    const message = mockMessage(COMMANDS.STOP.trigger);
+    await appService.handleMessageCreate(message);
+    expect(musicPlayerService.stop).toHaveBeenCalledWith(message);
   });
 
-  it('should ignore non-guild messages', async () => {
-    const mockMessage = {
-      guild: false,
-      content: '!play http://test.url',
-    };
-    jest.spyOn(musicPlayerService, 'play');
-    await appService.handleMessageCreate(mockMessage);
+  it('should call disconnect on DISCONNECT command', async () => {
+    const message = mockMessage(COMMANDS.DISCONNECT.trigger);
+    await appService.handleMessageCreate(message);
+    expect(voiceConnectionService.disconnect).toHaveBeenCalledWith(message);
+  });
+
+  it('should call listAllCommands on HELP command', async () => {
+    const message = mockMessage(COMMANDS.HELP.trigger);
+    await appService.handleMessageCreate(message);
+    expect(helpService.listAllCommands).toHaveBeenCalledWith(message);
+  });
+
+  it('should not call any service on unknown command', async () => {
+    const message = mockMessage('unknown');
+    await appService.handleMessageCreate(message);
     expect(musicPlayerService.play).not.toHaveBeenCalled();
+    expect(musicPlayerService.stop).not.toHaveBeenCalled();
+    expect(voiceConnectionService.disconnect).not.toHaveBeenCalled();
+    expect(helpService.listAllCommands).not.toHaveBeenCalled();
   });
 });
