@@ -4,8 +4,8 @@ import {
   createAudioPlayer,
   VoiceConnection,
 } from '@discordjs/voice';
-import { YoutubeService } from '../youtube-service/youtube-service.service';
-import { VoiceConnectionService } from '../voice-connection-service/voice-connection-service.service';
+import { YoutubeService } from '../youtube/youtube-service.service';
+import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
 import { MUSIC_MESSAGES } from '../../discord-messages.type';
 
 @Injectable()

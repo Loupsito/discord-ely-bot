@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
+  AudioPlayer,
+  createAudioResource,
   joinVoiceChannel,
   VoiceConnection,
   VoiceConnectionStatus,
-  AudioPlayer,
-  createAudioResource,
 } from '@discordjs/voice';
-import { YoutubeService } from '../youtube-service/youtube-service.service';
+import { YoutubeService } from '../youtube/youtube-service.service';
 import {
   GENERIC_MESSAGES,
   VOICE_CHANNEL_MESSAGES,
