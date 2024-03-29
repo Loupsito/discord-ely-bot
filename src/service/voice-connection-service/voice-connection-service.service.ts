@@ -7,7 +7,10 @@ import {
   createAudioResource,
 } from '@discordjs/voice';
 import { YoutubeService } from '../youtube-service/youtube-service.service';
-import { MESSAGES } from '../../discord-messages.type';
+import {
+  GENERIC_MESSAGES,
+  VOICE_CHANNEL_MESSAGES,
+} from '../../discord-messages.type';
 
 @Injectable()
 export class VoiceConnectionService {
@@ -35,9 +38,9 @@ export class VoiceConnectionService {
     ) {
       this.connection.destroy();
       this.connection = null;
-      message.reply(MESSAGES.BYE);
+      message.reply(GENERIC_MESSAGES.BYE);
     } else {
-      return message.reply('Je ne suis actuellement pas dans un canal vocal.');
+      return message.reply(VOICE_CHANNEL_MESSAGES.BOT_MUST_BE_IN_VOICE_CHANNEL);
     }
   }
 }

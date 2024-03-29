@@ -6,6 +6,7 @@ import {
 } from '@discordjs/voice';
 import { YoutubeService } from '../youtube-service/youtube-service.service';
 import { VoiceConnectionService } from '../voice-connection-service/voice-connection-service.service';
+import { MUSIC_MESSAGES } from '../../discord-messages.type';
 
 @Injectable()
 export class MusicPlayerService {
@@ -28,7 +29,9 @@ export class MusicPlayerService {
         this.player,
       );
       const videoTitle = await this.youtubeService.getVideoTitle(url);
-      return message.reply(`**En cours de lecture :** ${videoTitle}`);
+      return message.reply(
+        `**${MUSIC_MESSAGES.CURRENTLY_PLAYING} :** ${videoTitle}`,
+      );
     } catch (error) {
       message.reply(error);
     }
@@ -40,21 +43,18 @@ export class MusicPlayerService {
     if (this.player.state.status !== AudioPlayerStatus.Idle) {
       this.player.stop();
     }
-    return message.reply('La musique a été arrêtée.');
+    return message.reply(MUSIC_MESSAGES.MUSIC_STOPPED);
   }
 
   private extractUrlFromMessageContent(message): Promise<string> {
     return new Promise((resolve, reject) => {
       const commands = message.content.split(' ');
 
-      if (commands.length < 2) {
-        reject(
-          `Il faut fournir une URL Youtube.\n **Exemple :** !play https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
-        );
-      }
-
-      if (!this.youtubeService.isYoutubeUrl(commands[1])) {
-        reject('Il faut fournir une URL Youtube');
+      if (
+        commands.length < 2 ||
+        !this.youtubeService.isYoutubeUrl(commands[1])
+      ) {
+        reject(MUSIC_MESSAGES.MUST_GIVE_YOUTUBE_URL);
       }
 
       resolve(commands[1]);
@@ -64,9 +64,7 @@ export class MusicPlayerService {
   private replyErrorMessageIfNotInVoiceChannel(message) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      return message.reply(
-        'Vous devez être dans un canal vocal pour utiliser cette commande',
-      );
+      return message.reply(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL);
     }
   }
 }

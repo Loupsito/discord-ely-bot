@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as ytdl from 'ytdl-core';
 
 @Injectable()
 export class YoutubeService {
+  private logger = new Logger('DiscordCommandInterceptor');
+
   async getVideoTitle(url: string): Promise<string> {
     try {
       const info = await ytdl.getInfo(url);
       return info.videoDetails.title;
     } catch (error) {
-      console.error('Error fetching video title:', error);
+      this.logger.error('Error fetching video title:', error);
       return 'Unknown title';
     }
   }
@@ -17,6 +19,6 @@ export class YoutubeService {
   }
 
   isYoutubeUrl(url: string) {
-    return url.startsWith(' https://www.youtube.com/');
+    return url.startsWith('https://www.youtube.com/');
   }
 }
