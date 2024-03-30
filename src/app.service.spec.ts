@@ -8,6 +8,16 @@ import { COMMANDS } from './discord-command.type';
 import { ConfigService } from '@nestjs/config';
 import { YoutubeService } from './service/youtube/youtube-service.service';
 
+jest.mock('@discordjs/voice', () => {
+  return {
+    joinVoiceChannel: jest.fn(),
+    createAudioPlayer: jest.fn().mockImplementation(() => ({
+      play: jest.fn(),
+    })),
+    createAudioResource: jest.fn(),
+  };
+});
+
 describe('AppService', () => {
   let appService: AppService;
   let discordService: DiscordService;
