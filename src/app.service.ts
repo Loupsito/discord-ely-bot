@@ -35,7 +35,6 @@ export class AppService {
     const action = commandActions[command];
 
     if (action) {
-      // TODO: add NO_COLOR=true for production
       logCommand(command, message);
       await action();
     }
