@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: discord-bot-deployment  # your-deployment
+  name: discord-bot-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: discord-bot  # your-app
+      app: discord-bot
   template:
     metadata:
       labels:
-        app: discord-bot  # your-app
+        app: discord-bot
     spec:
       containers:
-        - name: discord-bot-container  # your-container
+        - name: discord-bot-container
           image: eu.gcr.io/third-campus-417718/bot-discord:latest
           ports:
             - containerPort: 80
@@ -23,3 +23,8 @@ spec:
                 secretKeyRef:
                   name: discord-bot-secret
                   key: DISCORD_TOKEN
+            - name: NO_COLOR
+              valueFrom:
+                configMapKeyRef:
+                  name: discord-bot-config
+                  key: NO_COLOR
