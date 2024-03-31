@@ -7,6 +7,7 @@ import { HelpService } from './service/help/help.service';
 import { COMMANDS } from './discord-command.type';
 import { ConfigService } from '@nestjs/config';
 import { YoutubeService } from './service/youtube/youtube-service.service';
+import { YoutubeModule } from './service/youtube/youtube.module';
 
 jest.mock('@discordjs/voice', () => {
   return {
@@ -35,13 +36,13 @@ describe('AppService', () => {
   let musicPlayerService: MusicPlayerService;
   let voiceConnectionService: VoiceConnectionService;
   let helpService: HelpService;
-  let youtubeService: YoutubeService;
 
   beforeEach(async () => {
     const discordClientMock = {
       on: jest.fn(),
     };
     const module: TestingModule = await Test.createTestingModule({
+      imports: [YoutubeModule],
       providers: [
         AppService,
         {
@@ -74,7 +75,6 @@ describe('AppService', () => {
       VoiceConnectionService,
     );
     helpService = module.get<HelpService>(HelpService);
-    youtubeService = module.get<YoutubeService>(YoutubeService);
   });
 
   it('should attach messageCreate event listener on module init', async () => {
