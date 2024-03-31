@@ -13,11 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: "Display environment variables"
-        run: echo "NO_COLOR = ${{ env.NO_COLOR }}"
-        env:
-          NO_COLOR: true
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0
         with:
