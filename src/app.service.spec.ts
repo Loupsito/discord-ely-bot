@@ -7,12 +7,15 @@ import { HelpService } from './service/help/help.service';
 import { COMMANDS } from './discord-command.type';
 import { YoutubeService } from './service/youtube/youtube-service.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
-import { discordjsVoiceMock } from './mock/discordjs-voice.mock';
 import { discordServiceMock } from './mock/discord-service.mock';
 import { configServiceMock } from './mock/config-service.mock';
 import { mockMessage } from './mock/message.mock';
 
-jest.mock('@discordjs/voice', () => discordjsVoiceMock);
+jest.mock('@discordjs/voice', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { discordjsVoiceMock } = require('./mock/discordjs-voice.mock');
+  return discordjsVoiceMock;
+});
 
 describe('AppService', () => {
   let appService: AppService;
