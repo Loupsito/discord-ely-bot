@@ -5,30 +5,14 @@ import { MusicPlayerService } from './service/music-player/music-player.service'
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
 import { HelpService } from './service/help/help.service';
 import { COMMANDS } from './discord-command.type';
-import { ConfigService } from '@nestjs/config';
 import { YoutubeService } from './service/youtube/youtube-service.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
+import { discordjsVoiceMock } from './mock/discordjs-voice.mock';
+import { discordServiceMock } from './mock/discord-service.mock';
+import { configServiceMock } from './mock/config-service.mock';
+import { mockMessage } from './mock/message.mock';
 
-jest.mock('@discordjs/voice', () => {
-  return {
-    joinVoiceChannel: jest.fn().mockImplementation(() => {
-      return {
-        subscribe: jest.fn(),
-      };
-    }),
-    createAudioPlayer: jest.fn().mockImplementation(() => ({
-      play: jest.fn(),
-      stop: jest.fn(),
-      state: {
-        status: 'idle',
-      },
-    })),
-    createAudioResource: jest.fn(),
-    AudioPlayerStatus: {
-      Idle: 'idle',
-    },
-  };
-});
+jest.mock('@discordjs/voice', () => discordjsVoiceMock);
 
 describe('AppService', () => {
   let appService: AppService;
@@ -38,33 +22,16 @@ describe('AppService', () => {
   let helpService: HelpService;
 
   beforeEach(async () => {
-    const discordClientMock = {
-      on: jest.fn(),
-    };
     const module: TestingModule = await Test.createTestingModule({
       imports: [YoutubeModule],
       providers: [
         AppService,
-        {
-          provide: DiscordService,
-          useValue: {
-            discordClient: discordClientMock, // Utilisation du mock ici
-          },
-        },
+        discordServiceMock,
         MusicPlayerService,
         VoiceConnectionService,
         HelpService,
         YoutubeService,
-        {
-          provide: ConfigService,
-          useValue: {
-            get: jest.fn((key) => {
-              if (key === 'DISCORD_TOKEN') {
-                return 'test-token';
-              }
-            }),
-          },
-        },
+        configServiceMock,
       ],
     }).compile();
 
@@ -84,28 +51,6 @@ describe('AppService', () => {
   });
 
   describe('handleMessageCreate', () => {
-    const mockMessage = (content: string) => ({
-      content,
-      author: {
-        globalName: 'ely',
-      },
-      guild: {
-        name: 'Elysium',
-      },
-      member: {
-        voice: {
-          channel: {
-            id: 'channelId',
-            guild: {
-              id: 'guildId',
-              voiceAdapterCreator: jest.fn(),
-            },
-          },
-        },
-      },
-      reply: jest.fn(),
-    });
-
     it('should call play on MUSIC command', async () => {
       const message = mockMessage(
         `${COMMANDS.PLAY.trigger} https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
