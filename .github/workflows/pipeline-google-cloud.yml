@@ -13,6 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: "Display environment variables"
+        run: echo "NO_COLOR = ${{ env.NO_COLOR }}"
+        env:
+          NO_COLOR: true
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0
         with:
@@ -53,7 +58,7 @@ jobs:
           kubectl create configmap discord-bot-config \
             --from-literal=NO_COLOR=${{ env.NO_COLOR }} --dry-run=client -o yaml | kubectl apply -f -
         env:
-          NO_COLOR: ${{ env.NO_COLOR }}
+          NO_COLOR: true
 
 
       - name: Deploy to GKE
