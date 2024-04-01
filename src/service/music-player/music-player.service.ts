@@ -65,11 +65,12 @@ export class MusicPlayerService {
   }
 
   private replyErrorMessageIfNotInVoiceChannel(message) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const voiceChannel = message.member.voice.channel;
       if (!voiceChannel) {
         reject(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL);
       }
+      resolve();
     });
   }
 }
