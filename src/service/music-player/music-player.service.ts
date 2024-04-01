@@ -19,9 +19,8 @@ export class MusicPlayerService {
   ) {}
 
   async play(message: any) {
-    this.replyErrorMessageIfNotInVoiceChannel(message);
-
     try {
+      await this.replyErrorMessageIfNotInVoiceChannel(message);
       const url = await this.extractUrlFromMessageContent(message);
       this.voiceConnectionService.joinAndPlay(
         message.member.voice.channel,
@@ -37,13 +36,17 @@ export class MusicPlayerService {
     }
   }
 
-  stop(message: any) {
-    this.replyErrorMessageIfNotInVoiceChannel(message);
+  async stop(message: any) {
+    try {
+      await this.replyErrorMessageIfNotInVoiceChannel(message);
 
-    if (this.player.state.status !== AudioPlayerStatus.Idle) {
-      this.player.stop();
+      if (this.player.state.status !== AudioPlayerStatus.Idle) {
+        this.player.stop();
+      }
+      return message.reply(MUSIC_MESSAGES.MUSIC_STOPPED);
+    } catch (error) {
+      message.reply(error);
     }
-    return message.reply(MUSIC_MESSAGES.MUSIC_STOPPED);
   }
 
   private extractUrlFromMessageContent(message): Promise<string> {
@@ -62,9 +65,11 @@ export class MusicPlayerService {
   }
 
   private replyErrorMessageIfNotInVoiceChannel(message) {
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) {
-      return message.reply(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL);
-    }
+    return new Promise((resolve, reject) => {
+      const voiceChannel = message.member.voice.channel;
+      if (!voiceChannel) {
+        reject(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL);
+      }
+    });
   }
 }
