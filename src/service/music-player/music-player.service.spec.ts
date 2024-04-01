@@ -13,14 +13,8 @@ jest.mock('@discordjs/voice', () => {
 });
 
 jest.mock('ytdl-core', () => {
-  const mockYtdlFunction = jest.fn().mockImplementation(() => ({
-    pipe: jest.fn(),
-  }));
-  return Object.assign(mockYtdlFunction, {
-    getInfo: jest.fn().mockResolvedValue({
-      videoDetails: { title: 'Test Video Title' },
-    }),
-  });
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require('../../mock/ytdl-core.mock').default;
 });
 
 describe('MusicPlayerService', () => {
