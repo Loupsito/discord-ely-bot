@@ -11,7 +11,7 @@ import { MUSIC_MESSAGES } from '../../discord-messages.type';
 @Injectable()
 export class MusicPlayerService {
   private connection: VoiceConnection | null = null;
-  private player = createAudioPlayer();
+  player = createAudioPlayer();
 
   constructor(
     private voiceConnectionService: VoiceConnectionService,
