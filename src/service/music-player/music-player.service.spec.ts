@@ -38,7 +38,7 @@ describe('MusicPlayerService', () => {
       const url = 'https://www.youtube.com/';
       const videoTitle = 'Video Title';
       const spyJoinAndPlay = jest.spyOn(voiceConnectionService, 'joinAndPlay');
-      const message = mockMessage('!play https://www.youtube.com/');
+      const message = mockMessage(`!play ${url}`);
 
       await service.play(message);
 
@@ -49,6 +49,33 @@ describe('MusicPlayerService', () => {
       );
       expect(message.reply).toHaveBeenCalledWith(
         expect.stringContaining(videoTitle),
+      );
+    });
+
+    it('should reply an error message because the url given is wrong', async () => {
+      const url = 'https://www.google.fr';
+      const spyJoinAndPlay = jest.spyOn(voiceConnectionService, 'joinAndPlay');
+      const message = mockMessage(`!play ${url}`);
+
+      await service.play(message);
+
+      expect(spyJoinAndPlay).not.toHaveBeenCalled();
+      expect(message.reply).toHaveBeenCalledWith(
+        expect.stringContaining(MUSIC_MESSAGES.MUST_GIVE_YOUTUBE_URL),
+      );
+    });
+
+    it('should reply an error message because the user is not a voice channel', async () => {
+      const url = 'https://www.youtube.com/';
+      const spyJoinAndPlay = jest.spyOn(voiceConnectionService, 'joinAndPlay');
+      const message = mockMessage(`!play ${url}`);
+      message.member.voice.channel = undefined;
+
+      await service.play(message);
+
+      expect(spyJoinAndPlay).not.toHaveBeenCalled();
+      expect(message.reply).toHaveBeenCalledWith(
+        expect.stringContaining(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL),
       );
     });
   });
