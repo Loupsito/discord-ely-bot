@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  AudioPlayer,
   AudioPlayerStatus,
   createAudioPlayer,
   VoiceConnection,
@@ -11,7 +12,7 @@ import { MUSIC_MESSAGES } from '../../discord-messages.type';
 @Injectable()
 export class MusicPlayerService {
   private connection: VoiceConnection | null = null;
-  player = createAudioPlayer();
+  private guildMusicPlayers = new Map<string, AudioPlayer>();
 
   constructor(
     private voiceConnectionService: VoiceConnectionService,
@@ -20,12 +21,13 @@ export class MusicPlayerService {
 
   async play(message: any) {
     try {
+      const musicPlayer = this.getOrCreateGuildPlayer(message);
       await this.replyErrorMessageIfNotInVoiceChannel(message);
       const url = await this.extractUrlFromMessageContent(message);
       this.voiceConnectionService.joinAndPlay(
-        message.member.voice.channel,
+        message,
         url,
-        this.player,
+        musicPlayer,
       );
       const videoTitle = await this.youtubeService.getVideoTitle(url);
       return message.reply(
@@ -38,15 +40,23 @@ export class MusicPlayerService {
 
   async stop(message: any) {
     try {
+      const musicPlayer = this.getOrCreateGuildPlayer(message);
       await this.replyErrorMessageIfNotInVoiceChannel(message);
 
-      if (this.player.state.status !== AudioPlayerStatus.Idle) {
-        this.player.stop();
+      if (musicPlayer.state.status !== AudioPlayerStatus.Idle) {
+        musicPlayer.stop();
       }
       return message.reply(MUSIC_MESSAGES.MUSIC_STOPPED);
     } catch (error) {
       message.reply(error);
     }
+  }
+
+  private getOrCreateGuildPlayer(message) {
+    if (!this.guildMusicPlayers.has(message.guildId)) {
+      this.guildMusicPlayers.set(message.guildId, createAudioPlayer());
+    }
+    return this.guildMusicPlayers.get(message.guildId);
   }
 
   private extractUrlFromMessageContent(message): Promise<string> {
