@@ -81,11 +81,11 @@ describe('MusicPlayerService', () => {
   });
 
   describe('stop', () => {
-    it('should stop the music and reply with a stop message', () => {
+    it('should stop the music and reply with a stop message', async () => {
       const message = mockMessage('!stop');
       service.player.state.status = AudioPlayerStatus.Playing;
 
-      service.stop(message);
+      await service.stop(message);
 
       expect(service.player.stop).toHaveBeenCalled();
       expect(message.reply).toHaveBeenCalledWith(
