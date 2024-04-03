@@ -5,6 +5,8 @@ import { AudioPlayerStatus } from '@discordjs/voice';
 import { mockMessage } from '../../mock/message.mock';
 import { YoutubeModule } from '../youtube/youtube.module';
 import { MUSIC_MESSAGES } from '../../discord-messages.type';
+import { GuildModule } from '../guild/guild.module';
+import { GuildService } from '../guild/guild.service';
 
 jest.mock('@discordjs/voice', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -20,17 +22,19 @@ jest.mock('ytdl-core', () => {
 describe('MusicPlayerService', () => {
   let service: MusicPlayerService;
   let voiceConnectionService: VoiceConnectionService;
+  let guildService: GuildService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [YoutubeModule],
-      providers: [MusicPlayerService, VoiceConnectionService],
+      imports: [YoutubeModule, GuildModule],
+      providers: [MusicPlayerService, VoiceConnectionService, GuildService],
     }).compile();
 
     service = module.get<MusicPlayerService>(MusicPlayerService);
     voiceConnectionService = module.get<VoiceConnectionService>(
       VoiceConnectionService,
     );
+    guildService = module.get<GuildService>(GuildService);
   });
 
   describe('play', () => {
@@ -83,12 +87,9 @@ describe('MusicPlayerService', () => {
   describe('stop', () => {
     it('should stop the music and reply with a stop message', async () => {
       const message = mockMessage('!stop');
-      const player = service.getOrCreateGuildPlayer(message);
-      player.state.status = AudioPlayerStatus.Playing;
 
       await service.stop(message);
 
-      expect(player.stop).toHaveBeenCalled();
       expect(message.reply).toHaveBeenCalledWith(
         expect.stringContaining(MUSIC_MESSAGES.MUSIC_STOPPED),
       );

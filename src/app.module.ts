@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DiscordModule } from './service/discord/discord.module';
 import { HelpService } from './service/help/help.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
+import { GuildModule } from './service/guild/guild.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { YoutubeModule } from './service/youtube/youtube.module';
     ConfigModule.forRoot(),
     DiscordModule,
     YoutubeModule,
+    GuildModule,
   ],
   providers: [
     MusicPlayerService,
