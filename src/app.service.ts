@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MusicPlayerService } from './service/music-player/music-player.service';
 import { DiscordService } from './service/discord/discord.service';
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
@@ -8,6 +8,7 @@ import { HelpService } from './service/help/help.service';
 
 @Injectable()
 export class AppService {
+  private logger = new Logger('AppService');
   constructor(
     private readonly discordService: DiscordService,
     private readonly musicPlayerService: MusicPlayerService,
@@ -34,9 +35,16 @@ export class AppService {
     const command = message.content.split(' ')[0];
     const action = commandActions[command];
 
-    if (action) {
-      logCommand(command, message);
-      await action();
+    try {
+      if (action) {
+        logCommand(command, message);
+        await action();
+      }
+    } catch (e) {
+      this.logger.error(`Error when running command ${command}`, e);
+      message.reply(
+        `Une erreur est survenu lors de l'exécution de la commande ${command}`,
+      );
     }
   }
 }

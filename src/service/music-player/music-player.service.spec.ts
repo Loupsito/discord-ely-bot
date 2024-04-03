@@ -43,7 +43,7 @@ describe('MusicPlayerService', () => {
       await service.play(message);
 
       expect(spyJoinAndPlay).toHaveBeenCalledWith(
-        message.member.voice.channel,
+        message,
         url,
         expect.anything(),
       );
@@ -83,11 +83,12 @@ describe('MusicPlayerService', () => {
   describe('stop', () => {
     it('should stop the music and reply with a stop message', async () => {
       const message = mockMessage('!stop');
-      service.player.state.status = AudioPlayerStatus.Playing;
+      const player = service.getOrCreateGuildPlayer(message);
+      player.state.status = AudioPlayerStatus.Playing;
 
       await service.stop(message);
 
-      expect(service.player.stop).toHaveBeenCalled();
+      expect(player.stop).toHaveBeenCalled();
       expect(message.reply).toHaveBeenCalledWith(
         expect.stringContaining(MUSIC_MESSAGES.MUSIC_STOPPED),
       );

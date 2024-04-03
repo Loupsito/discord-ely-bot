@@ -24,11 +24,7 @@ export class MusicPlayerService {
       const musicPlayer = this.getOrCreateGuildPlayer(message);
       await this.replyErrorMessageIfNotInVoiceChannel(message);
       const url = await this.extractUrlFromMessageContent(message);
-      this.voiceConnectionService.joinAndPlay(
-        message,
-        url,
-        musicPlayer,
-      );
+      this.voiceConnectionService.joinAndPlay(message, url, musicPlayer);
       const videoTitle = await this.youtubeService.getVideoTitle(url);
       return message.reply(
         `**${MUSIC_MESSAGES.CURRENTLY_PLAYING} :** ${videoTitle}`,
@@ -52,7 +48,7 @@ export class MusicPlayerService {
     }
   }
 
-  private getOrCreateGuildPlayer(message) {
+  getOrCreateGuildPlayer(message) {
     if (!this.guildMusicPlayers.has(message.guildId)) {
       this.guildMusicPlayers.set(message.guildId, createAudioPlayer());
     }

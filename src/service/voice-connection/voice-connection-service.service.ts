@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   AudioPlayer,
-  createAudioPlayer,
   createAudioResource,
   joinVoiceChannel,
   VoiceConnection,
