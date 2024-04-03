@@ -1,9 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
+  private logger = new Logger('DiscordService');
   private readonly client: Client;
 
   constructor(private readonly configService: ConfigService) {
@@ -23,7 +24,7 @@ export class DiscordService implements OnModuleInit {
 
   async onModuleInit() {
     this.client.on('ready', () => {
-      console.log(`Logged in as ${this.client.user.tag}!`);
+      this.logger.log(`Logged in as ${this.client.user.tag}!`);
     });
 
     const token = this.configService.get<string>('DISCORD_TOKEN');
