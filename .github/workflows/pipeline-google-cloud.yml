@@ -13,6 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install dependencies and run tests
+        run: |
+          npm install
+          npm run test
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0
         with:
