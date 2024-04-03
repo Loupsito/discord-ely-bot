@@ -2,6 +2,10 @@ export const discordjsVoiceMock = {
   joinVoiceChannel: jest.fn().mockImplementation(() => {
     return {
       subscribe: jest.fn(),
+      state: {
+        status: '',
+      },
+      destroy: jest.fn(),
     };
   }),
   createAudioPlayer: jest.fn().mockImplementation(() => ({
@@ -14,5 +18,10 @@ export const discordjsVoiceMock = {
   createAudioResource: jest.fn(),
   AudioPlayerStatus: {
     Idle: 'idle',
+  },
+  VoiceConnectionStatus: {
+    Ready: 'ready',
+    Disconnected: 'disconnected',
+    // Ajoutez d'autres états au besoin
   },
 };

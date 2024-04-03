@@ -14,33 +14,46 @@ import {
 
 @Injectable()
 export class VoiceConnectionService {
-  private connection: VoiceConnection | null = null;
+  private guildVoiceConnections = new Map<string, VoiceConnection>();
 
   constructor(private youtubeService: YoutubeService) {}
 
-  joinAndPlay(voiceChannel: any, url: string, player: AudioPlayer) {
-    this.connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    });
-
+  joinAndPlay(message: any, url: string, player: AudioPlayer) {
+    const guildConnection = this.getOrCreateGuildVoiceConnection(message);
     const stream = this.youtubeService.getStream(url);
     const resource = createAudioResource(stream);
     player.play(resource);
-    this.connection.subscribe(player);
+    guildConnection.subscribe(player);
   }
 
   disconnect(message) {
+    const guildConnection = this.getOrCreateGuildVoiceConnection(message);
     if (
-      this.connection &&
-      this.connection.state.status !== VoiceConnectionStatus.Disconnected
+      guildConnection &&
+      guildConnection.state.status !== VoiceConnectionStatus.Disconnected
     ) {
-      this.connection.destroy();
-      this.connection = null;
+      guildConnection.destroy();
+      this.deleteGuildConnection(message.guildId);
       message.reply(GENERIC_MESSAGES.BYE);
     } else {
       return message.reply(VOICE_CHANNEL_MESSAGES.BOT_MUST_BE_IN_VOICE_CHANNEL);
     }
+  }
+
+  private getOrCreateGuildVoiceConnection(message) {
+    if (!this.guildVoiceConnections.has(message.guildId)) {
+      const voiceChannel = message.member.voice.channel;
+      const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: voiceChannel.guild.id,
+        adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+      });
+      this.guildVoiceConnections.set(message.guildId, connection);
+    }
+    return this.guildVoiceConnections.get(message.guildId);
+  }
+
+  private deleteGuildConnection(guildId: string) {
+    this.guildVoiceConnections.delete(guildId);
   }
 }
