@@ -6,10 +6,16 @@ import {
   VoiceConnection,
 } from '@discordjs/voice';
 
+export interface Playlist {
+  textChannel: any;
+  queue: string[];
+}
+
 @Injectable()
 export class GuildService {
   private guildMusicPlayers = new Map<string, AudioPlayer>();
   private guildVoiceConnections = new Map<string, VoiceConnection>();
+  private guildPlaylists = new Map<string, Playlist>();
 
   constructor() {}
 
@@ -39,5 +45,13 @@ export class GuildService {
 
   deleteGuildConnection(guildId: string) {
     this.guildVoiceConnections.delete(guildId);
+  }
+
+  getOrCreateToPlaylist(guildId: string) {
+    if (!this.guildPlaylists.has(guildId)) {
+      const newPlaylist: Playlist = { textChannel: null, queue: [] };
+      this.guildPlaylists.set(guildId, newPlaylist);
+    }
+    return this.guildPlaylists.get(guildId);
   }
 }

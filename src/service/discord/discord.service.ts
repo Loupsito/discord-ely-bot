@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, TextChannel } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -20,6 +20,24 @@ export class DiscordService implements OnModuleInit {
 
   get discordClient(): Client {
     return this.client;
+  }
+
+  async sendMessageToChannel(channelId, messageText) {
+    try {
+      const channel = await this.client.channels.fetch(channelId);
+
+      // Vérifier que le canal est un TextChannel ou DMChannel avant d'envoyer un message
+      if (channel instanceof TextChannel) {
+        await channel.send(messageText);
+      } else {
+        console.error("Le canal trouvé n'est pas un canal de texte.");
+      }
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération du canal ou de l'envoi du message:",
+        error,
+      );
+    }
   }
 
   async onModuleInit() {

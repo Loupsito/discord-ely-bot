@@ -9,6 +9,7 @@ import { HelpService } from './service/help/help.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
 import { GuildModule } from './service/guild/guild.module';
 import { GuildService } from './service/guild/guild.service';
+import { PlaylistService } from './service/playlist/playlist.service';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GuildService } from './service/guild/guild.service';
     VoiceConnectionService,
     HelpService,
     GuildService,
+    PlaylistService,
   ],
 })
 export class AppModule {}

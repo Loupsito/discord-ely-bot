@@ -4,7 +4,7 @@ interface DiscordCommandType {
   example: string;
 }
 
-type DiscordCommand = 'PLAY' | 'STOP' | 'DISCONNECT' | 'HELP';
+type DiscordCommand = 'PLAY' | 'STOP' | 'ADD' | 'DISCONNECT' | 'HELP';
 
 export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
   PLAY: {
@@ -17,6 +17,11 @@ export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
     description:
       'Commande qui permet de stopper une musique en cours de lecture.',
     example: '!stop',
+  },
+  ADD: {
+    trigger: '!add',
+    description: `Commande qui permet d'ajouter une musique à une playlist`,
+    example: '!add <youtube-url>',
   },
   DISCONNECT: {
     trigger: '!disconnect',

@@ -4,6 +4,7 @@ import { YoutubeService } from '../youtube/youtube-service.service';
 import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
 import { MUSIC_MESSAGES } from '../../discord-messages.type';
 import { GuildService } from '../guild/guild.service';
+import { isYoutubeUrl } from '../../util/music-command.utils';
 
 @Injectable()
 export class MusicPlayerService {
@@ -13,10 +14,12 @@ export class MusicPlayerService {
     private guildService: GuildService,
   ) {}
 
-  async play(message: any) {
+  async play(message: any, urlGiven?: string) {
     try {
       await this.replyErrorMessageIfNotInVoiceChannel(message);
-      const url = await this.extractUrlFromMessageContent(message);
+      const url = urlGiven
+        ? urlGiven
+        : await this.extractUrlFromMessageContent(message);
 
       const musicPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
@@ -53,10 +56,7 @@ export class MusicPlayerService {
     return new Promise((resolve, reject) => {
       const commands = message.content.split(' ');
 
-      if (
-        commands.length < 2 ||
-        !this.youtubeService.isYoutubeUrl(commands[1])
-      ) {
+      if (commands.length < 2 || !isYoutubeUrl(commands[1])) {
         reject(MUSIC_MESSAGES.MUST_GIVE_YOUTUBE_URL);
       }
 

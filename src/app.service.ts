@@ -5,6 +5,7 @@ import { VoiceConnectionService } from './service/voice-connection/voice-connect
 import { COMMANDS } from './discord-command.type';
 import { logCommand } from './infrastructure/discord-commands.interceptor';
 import { HelpService } from './service/help/help.service';
+import { PlaylistService } from './service/playlist/playlist.service';
 
 @Injectable()
 export class AppService {
@@ -12,6 +13,7 @@ export class AppService {
   constructor(
     private readonly discordService: DiscordService,
     private readonly musicPlayerService: MusicPlayerService,
+    private readonly playlistService: PlaylistService,
     private readonly voiceConnectionService: VoiceConnectionService,
     private readonly helpService: HelpService,
   ) {}
@@ -27,6 +29,8 @@ export class AppService {
     const commandActions = {
       [COMMANDS.PLAY.trigger]: () => this.musicPlayerService.play(message),
       [COMMANDS.STOP.trigger]: () => this.musicPlayerService.stop(message),
+      [COMMANDS.ADD.trigger]: () =>
+        this.playlistService.addTrackToPlaylist(message),
       [COMMANDS.DISCONNECT.trigger]: () =>
         this.voiceConnectionService.disconnect(message),
       [COMMANDS.HELP.trigger]: () => this.helpService.listAllCommands(message),
