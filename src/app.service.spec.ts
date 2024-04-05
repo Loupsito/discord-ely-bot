@@ -10,6 +10,8 @@ import { YoutubeModule } from './service/youtube/youtube.module';
 import { discordServiceMock } from './mock/discord-service.mock';
 import { configServiceMock } from './mock/config-service.mock';
 import { mockMessage } from './mock/message.mock';
+import { GuildModule } from './service/guild/guild.module';
+import { GuildService } from './service/guild/guild.service';
 
 jest.mock('@discordjs/voice', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -26,7 +28,7 @@ describe('AppService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [YoutubeModule],
+      imports: [YoutubeModule, GuildModule],
       providers: [
         AppService,
         discordServiceMock,
@@ -35,6 +37,7 @@ describe('AppService', () => {
         HelpService,
         YoutubeService,
         configServiceMock,
+        GuildService,
       ],
     }).compile();
 
