@@ -8,7 +8,12 @@ import {
 
 export interface Playlist {
   textChannel: any;
-  queue: string[];
+  queue: Music[];
+}
+
+export interface Music {
+  url: string;
+  title: string;
 }
 
 @Injectable()
@@ -47,7 +52,7 @@ export class GuildService {
     this.guildVoiceConnections.delete(guildId);
   }
 
-  getOrCreateToPlaylist(guildId: string) {
+  getOrCreatePlaylist(guildId: string) {
     if (!this.guildPlaylists.has(guildId)) {
       const newPlaylist: Playlist = { textChannel: null, queue: [] };
       this.guildPlaylists.set(guildId, newPlaylist);

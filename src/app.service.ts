@@ -31,6 +31,8 @@ export class AppService {
       [COMMANDS.STOP.trigger]: () => this.musicPlayerService.stop(message),
       [COMMANDS.ADD.trigger]: () =>
         this.playlistService.addTrackToPlaylist(message),
+      [COMMANDS.PLAYLIST.trigger]: () =>
+        this.playlistService.showPlaylist(message),
       [COMMANDS.DISCONNECT.trigger]: () =>
         this.voiceConnectionService.disconnect(message),
       [COMMANDS.HELP.trigger]: () => this.helpService.listAllCommands(message),

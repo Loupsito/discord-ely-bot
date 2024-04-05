@@ -5,6 +5,8 @@ import { VoiceConnectionService } from '../voice-connection/voice-connection-ser
 import { MUSIC_MESSAGES } from '../../discord-messages.type';
 import { GuildService } from '../guild/guild.service';
 import { isYoutubeUrl } from '../../util/music-command.utils';
+import { Message } from 'discord.js';
+import { DiscordService } from '../discord/discord.service';
 
 @Injectable()
 export class MusicPlayerService {
@@ -12,9 +14,10 @@ export class MusicPlayerService {
     private voiceConnectionService: VoiceConnectionService,
     private youtubeService: YoutubeService,
     private guildService: GuildService,
+    private discordService: DiscordService,
   ) {}
 
-  async play(message: any, urlGiven?: string) {
+  async play(message: Message, urlGiven?: string) {
     try {
       await this.replyErrorMessageIfNotInVoiceChannel(message);
       const url = urlGiven
@@ -27,7 +30,8 @@ export class MusicPlayerService {
       this.voiceConnectionService.joinAndPlay(message, url, musicPlayer);
 
       const videoTitle = await this.youtubeService.getVideoTitle(url);
-      return message.reply(
+      return this.discordService.sendMessageToChannel(
+        message.channelId,
         `**${MUSIC_MESSAGES.CURRENTLY_PLAYING} :** ${videoTitle}`,
       );
     } catch (error) {

@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { AudioPlayer, AudioPlayerStatus } from '@discordjs/voice';
 import { GuildService } from '../guild/guild.service';
 import { MusicPlayerService } from '../music-player/music-player.service';
-import { extractUrlFromMessageContent } from '../../util/music-command.utils';
+import {
+  buildMessageToShowPlaylist,
+  extractUrlFromMessageContent,
+} from '../../util/music-command.utils';
 import { YoutubeService } from '../youtube/youtube-service.service';
 import { DiscordService } from '../discord/discord.service';
 
@@ -20,10 +23,13 @@ export class PlaylistService {
       message.guildId,
     );
     const urlTrack = await extractUrlFromMessageContent(message);
-    const playlist = this.guildService.getOrCreateToPlaylist(message.guildId);
+    const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
     const videoTitle = await this.youtubeService.getVideoTitle(urlTrack);
 
-    playlist.queue.push(urlTrack);
+    playlist.queue.push({
+      url: urlTrack,
+      title: videoTitle,
+    });
 
     if (!playlist.textChannel) {
       playlist.textChannel = message;
@@ -40,7 +46,7 @@ export class PlaylistService {
   }
 
   async playNextTrack(guildId: string) {
-    const playlist = this.guildService.getOrCreateToPlaylist(guildId);
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
     const queue = playlist.queue;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
@@ -48,12 +54,12 @@ export class PlaylistService {
       const nextTrack = queue.shift(); // Récupère et supprime le premier élément de la playlist
       this.attachTrackEndListener(audioPlayer, guildId); // Attache un listener pour jouer le prochain morceau
 
-      await this.musicPlayerService.play(playlist.textChannel, nextTrack);
+      await this.musicPlayerService.play(playlist.textChannel, nextTrack.url);
     }
   }
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
-    const playlist = this.guildService.getOrCreateToPlaylist(guildId);
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
     const queue = playlist.queue;
     audioPlayer.on('stateChange', async (oldState, newState) => {
       if (
@@ -74,5 +80,16 @@ export class PlaylistService {
         }
       }
     });
+  }
+
+  async showPlaylist(message) {
+    const guildId = message.guildId;
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
+
+    if (playlist.queue.length > 0) {
+      message.reply(buildMessageToShowPlaylist(playlist));
+    } else {
+      message.reply('La playlist est actuellement vide.');
+    }
   }
 }
