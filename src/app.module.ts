@@ -8,6 +8,7 @@ import { DiscordModule } from './service/discord/discord.module';
 import { HelpService } from './service/help/help.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
 import { GuildModule } from './service/guild/guild.module';
+import { GuildService } from './service/guild/guild.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { GuildModule } from './service/guild/guild.module';
     AppService,
     VoiceConnectionService,
     HelpService,
+    GuildService,
   ],
 })
 export class AppModule {}
