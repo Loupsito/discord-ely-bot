@@ -51,32 +51,36 @@ export class PlaylistService {
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
     if (playlist && queue.length > 0) {
-      const nextTrack = queue.shift(); // Récupère et supprime le premier élément de la playlist
-      this.attachTrackEndListener(audioPlayer, guildId); // Attache un listener pour jouer le prochain morceau
+      const currentTrack = queue[0];
+      playlist.currentlyPlaying = currentTrack;
+      this.attachTrackEndListener(audioPlayer, guildId);
 
-      await this.musicPlayerService.play(playlist.textChannel, nextTrack.url);
+      await this.musicPlayerService.play(
+        playlist.textChannel,
+        currentTrack.url,
+      );
     }
   }
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
-    const queue = playlist.queue;
+
     audioPlayer.on('stateChange', async (oldState, newState) => {
       if (
         oldState.status === AudioPlayerStatus.Playing &&
         newState.status === AudioPlayerStatus.Idle
       ) {
-        if (queue.length == 0) {
-          audioPlayer.removeListener(
-            'messageCreate',
-            this.attachTrackEndListener,
-          );
-          this.discordService.sendMessageToChannel(
+        const finishedTrack = playlist.queue.shift();
+        console.log(`Retrait de ${finishedTrack.title}`);
+
+        if (playlist.queue.length > 0) {
+          await this.playNextTrack(guildId);
+        } else {
+          await this.discordService.sendMessageToChannel(
             playlist.textChannel.channelId,
             'La playlist est vide',
           );
-        } else {
-          await this.playNextTrack(guildId);
+          delete playlist.currentlyPlaying;
         }
       }
     });

@@ -1,5 +1,4 @@
 import { MUSIC_MESSAGES } from '../discord-messages.type';
-import { Playlist } from '../service/guild/guild.service';
 
 export const extractUrlFromMessageContent = (message): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -17,10 +16,17 @@ export const isYoutubeUrl = (url: string) => {
   return url.startsWith('https://www.youtube.com/');
 };
 
-export const buildMessageToShowPlaylist = (playlist: Playlist) => {
+export const buildMessageToShowPlaylist = (playlist) => {
   let response = '**Playlist Actuelle:**\n';
+
+  if (playlist.currentlyPlaying) {
+    response += `**▶️ En cours de lecture :** ${playlist.currentlyPlaying.title}\n`;
+  }
+
   playlist.queue.forEach((track, index) => {
-    response += `${index + 1}. ${track.title}\n`;
+    const displayIndex = playlist.currentlyPlaying ? index + 2 : index + 1;
+    response += `${displayIndex}. ${track.title}\n`;
   });
+
   return response;
 };

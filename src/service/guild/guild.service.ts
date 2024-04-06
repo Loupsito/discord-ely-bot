@@ -9,6 +9,7 @@ import {
 export interface Playlist {
   textChannel: any;
   queue: Music[];
+  currentlyPlaying: Music;
 }
 
 export interface Music {
@@ -54,7 +55,11 @@ export class GuildService {
 
   getOrCreatePlaylist(guildId: string) {
     if (!this.guildPlaylists.has(guildId)) {
-      const newPlaylist: Playlist = { textChannel: null, queue: [] };
+      const newPlaylist: Playlist = {
+        textChannel: null,
+        queue: [],
+        currentlyPlaying: null,
+      };
       this.guildPlaylists.set(guildId, newPlaylist);
     }
     return this.guildPlaylists.get(guildId);
