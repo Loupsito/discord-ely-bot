@@ -45,7 +45,7 @@ export class PlaylistService {
       );
       await this.playNextTrack(message.guildId);
     } else {
-      message.reply(`Ajout à la playlist de ${videoTitle}`);
+      message.reply(`Ajout à la playlist de **${videoTitle}**`);
     }
   }
 
