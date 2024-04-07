@@ -50,10 +50,6 @@ export class GuildService {
     return this.guildVoiceConnections.get(guildId);
   }
 
-  deleteGuildConnection(guildId: string) {
-    this.guildVoiceConnections.delete(guildId);
-  }
-
   getOrCreatePlaylist(guildId: string) {
     if (!this.guildPlaylists.has(guildId)) {
       const newPlaylist: Playlist = {
@@ -65,5 +61,11 @@ export class GuildService {
       this.guildPlaylists.set(guildId, newPlaylist);
     }
     return this.guildPlaylists.get(guildId);
+  }
+
+  purgeAll(guildId: string) {
+    this.guildVoiceConnections.delete(guildId);
+    this.guildPlaylists.delete(guildId);
+    this.guildMusicPlayers.delete(guildId);
   }
 }

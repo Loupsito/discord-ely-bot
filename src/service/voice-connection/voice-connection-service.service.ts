@@ -42,7 +42,7 @@ export class VoiceConnectionService {
       voiceConnection.state.status !== VoiceConnectionStatus.Disconnected
     ) {
       voiceConnection.destroy();
-      this.guildService.deleteGuildConnection(message.guildId);
+      this.guildService.purgeAll(message.guildId);
       message.reply(GENERIC_MESSAGES.BYE);
     } else {
       return message.reply(VOICE_CHANNEL_MESSAGES.BOT_MUST_BE_IN_VOICE_CHANNEL);
