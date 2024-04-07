@@ -5,6 +5,10 @@ export const discordServiceMock = {
   useValue: {
     discordClient: {
       on: jest.fn(),
+      channels: {
+        fetch: jest.fn(),
+      },
     },
+    sendMessageToChannel: jest.fn(),
   },
 };

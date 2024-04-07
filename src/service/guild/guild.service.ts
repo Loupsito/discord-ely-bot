@@ -20,18 +20,18 @@ export interface Music {
 
 @Injectable()
 export class GuildService {
-  private guildMusicPlayers = new Map<string, AudioPlayer>();
+  private guildAudioPlayers = new Map<string, AudioPlayer>();
   private guildVoiceConnections = new Map<string, VoiceConnection>();
   private guildPlaylists = new Map<string, Playlist>();
 
   constructor() {}
 
   getOrCreateAudioPlayer(guildId: string): AudioPlayer {
-    if (!this.guildMusicPlayers.has(guildId)) {
+    if (!this.guildAudioPlayers.has(guildId)) {
       const audioPlayer = createAudioPlayer();
-      this.guildMusicPlayers.set(guildId, audioPlayer);
+      this.guildAudioPlayers.set(guildId, audioPlayer);
     }
-    return this.guildMusicPlayers.get(guildId);
+    return this.guildAudioPlayers.get(guildId);
   }
 
   getOrCreateVoiceConnection(
@@ -66,6 +66,6 @@ export class GuildService {
   purgeAll(guildId: string) {
     this.guildVoiceConnections.delete(guildId);
     this.guildPlaylists.delete(guildId);
-    this.guildMusicPlayers.delete(guildId);
+    this.guildAudioPlayers.delete(guildId);
   }
 }

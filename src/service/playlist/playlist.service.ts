@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AudioPlayer, AudioPlayerStatus } from '@discordjs/voice';
 import { GuildService } from '../guild/guild.service';
-import { MusicPlayerService } from '../music-player/music-player.service';
+import { AudioPlayerService } from '../audio-player/audio-player.service';
 import {
   buildMessageToShowPlaylist,
   extractUrlFromMessageContent,
@@ -14,8 +14,8 @@ import { DiscordService } from '../discord/discord.service';
 export class PlaylistService {
   constructor(
     private guildService: GuildService,
-    @Inject(forwardRef(() => MusicPlayerService))
-    private musicPlayerService: MusicPlayerService,
+    @Inject(forwardRef(() => AudioPlayerService))
+    private audioPlayerService: AudioPlayerService,
     private youtubeService: YoutubeService,
     private discordService: DiscordService,
   ) {}
@@ -59,7 +59,7 @@ export class PlaylistService {
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
 
-      await this.musicPlayerService.play(
+      await this.audioPlayerService.play(
         playlist.textChannel,
         currentTrack.url,
         true,

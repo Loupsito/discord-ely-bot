@@ -13,7 +13,7 @@ import { DiscordService } from '../discord/discord.service';
 import { PlaylistService } from '../playlist/playlist.service';
 
 @Injectable()
-export class MusicPlayerService {
+export class AudioPlayerService {
   constructor(
     private voiceConnectionService: VoiceConnectionService,
     private youtubeService: YoutubeService,
@@ -23,11 +23,7 @@ export class MusicPlayerService {
     private playlistService: PlaylistService,
   ) {}
 
-  async play(
-    message: Message,
-    urlGiven?: string,
-    fromPlaylist: boolean = false,
-  ) {
+  async play(message, urlGiven?: string, fromPlaylist: boolean = false) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
       const url = urlGiven
@@ -38,10 +34,10 @@ export class MusicPlayerService {
         await this.playlistService.pauseCurrentPlaylistIfNeeded(message);
       }
 
-      const musicPlayer = this.guildService.getOrCreateAudioPlayer(
+      const audioPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
       );
-      this.voiceConnectionService.joinAndPlay(message, url, musicPlayer);
+      this.voiceConnectionService.joinAndPlay(message, url, audioPlayer);
 
       const videoTitle = await this.youtubeService.getVideoTitle(url);
       return this.discordService.sendMessageToChannel(
@@ -57,15 +53,15 @@ export class MusicPlayerService {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
 
-      const musicPlayer = this.guildService.getOrCreateAudioPlayer(
+      const audioPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
       );
       const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
 
       let replyMessage = '';
 
-      if (musicPlayer.state.status !== AudioPlayerStatus.Idle) {
-        musicPlayer.stop();
+      if (audioPlayer.state.status !== AudioPlayerStatus.Idle) {
+        audioPlayer.stop();
         replyMessage += MUSIC_MESSAGES.MUSIC_STOPPED;
       } else {
         return message.reply(

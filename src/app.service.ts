@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MusicPlayerService } from './service/music-player/music-player.service';
+import { AudioPlayerService } from './service/audio-player/audio-player.service';
 import { DiscordService } from './service/discord/discord.service';
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
 import {
@@ -16,7 +16,7 @@ export class AppService {
   private logger = new Logger('AppService');
   constructor(
     private readonly discordService: DiscordService,
-    private readonly musicPlayerService: MusicPlayerService,
+    private readonly audioPlayerService: AudioPlayerService,
     private readonly playlistService: PlaylistService,
     private readonly voiceConnectionService: VoiceConnectionService,
     private readonly helpService: HelpService,
@@ -32,13 +32,13 @@ export class AppService {
   async handleMessageCreate(message) {
     const commandActions = {
       [COMMANDS_AUDIO_PLAYER.PLAY.trigger]: () =>
-        this.musicPlayerService.play(message),
+        this.audioPlayerService.play(message),
       [COMMANDS_AUDIO_PLAYER.STOP.trigger]: () =>
-        this.musicPlayerService.stop(message),
+        this.audioPlayerService.stop(message),
       [COMMANDS_AUDIO_PLAYER.PAUSE.trigger]: () =>
-        this.musicPlayerService.pause(message),
+        this.audioPlayerService.pause(message),
       [COMMANDS_AUDIO_PLAYER.RESUME.trigger]: () =>
-        this.musicPlayerService.resume(message),
+        this.audioPlayerService.resume(message),
 
       [COMMANDS_PLAYLIST.ADD.trigger]: () =>
         this.playlistService.addTrackToPlaylist(message),
