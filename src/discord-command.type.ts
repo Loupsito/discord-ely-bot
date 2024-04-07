@@ -4,7 +4,17 @@ interface DiscordCommandType {
   example: string;
 }
 
-type DiscordCommand = 'PLAY' | 'STOP' | 'ADD' | 'PLAYLIST' | 'DISCONNECT' | 'HELP';
+type DiscordCommand =
+  | 'PLAY'
+  | 'STOP'
+  | 'PAUSE'
+  | 'RESUME'
+  | 'ADD'
+  | 'PLAYLIST'
+  | 'EMPTY'
+  | 'NEXT'
+  | 'DISCONNECT'
+  | 'HELP';
 
 export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
   PLAY: {
@@ -18,6 +28,16 @@ export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
       'Commande qui permet de stopper une musique en cours de lecture.',
     example: '!stop',
   },
+  PAUSE: {
+    trigger: '!pause',
+    description: `Commande qui permet de mettre en pause la musique en cours`,
+    example: '!pause',
+  },
+  RESUME: {
+    trigger: '!resume',
+    description: `Commande qui permet de relancer la lecture de la musique précédemment mis en pause`,
+    example: '!resume',
+  },
   ADD: {
     trigger: '!add',
     description: `Commande qui permet d'ajouter une musique à une playlist`,
@@ -27,6 +47,16 @@ export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
     trigger: '!playlist',
     description: `Commande qui permet d'afficher la playlist en cours`,
     example: '!playlist',
+  },
+  EMPTY: {
+    trigger: '!empty',
+    description: `Commande qui permet de vider la playlist en cours`,
+    example: '!empty',
+  },
+  NEXT: {
+    trigger: '!next',
+    description: `Commande qui permet de passer à la musique suivante dans la playlist`,
+    example: '!next',
   },
   DISCONNECT: {
     trigger: '!disconnect',

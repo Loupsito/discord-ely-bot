@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AudioPlayer, AudioPlayerStatus } from '@discordjs/voice';
 import { GuildService } from '../guild/guild.service';
 import { MusicPlayerService } from '../music-player/music-player.service';
@@ -13,6 +13,7 @@ import { DiscordService } from '../discord/discord.service';
 export class PlaylistService {
   constructor(
     private guildService: GuildService,
+    @Inject(forwardRef(() => MusicPlayerService))
     private musicPlayerService: MusicPlayerService,
     private youtubeService: YoutubeService,
     private discordService: DiscordService,
@@ -62,6 +63,42 @@ export class PlaylistService {
     }
   }
 
+  async moveToNextTrack(message) {
+    const audioPlayer = this.guildService.getOrCreateAudioPlayer(
+      message.guildId,
+    );
+    audioPlayer.stop();
+    message.reply(`Passage à la musique suivante.`);
+  }
+
+  async showPlaylist(message) {
+    const guildId = message.guildId;
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
+
+    if (playlist.queue.length > 0) {
+      message.reply(buildMessageToShowPlaylist(playlist));
+    } else {
+      let replyMessage = `La playlist est actuellement vide. `;
+      if (playlist.currentlyPlaying) {
+        replyMessage += `Mais il reste encore une musique en cours de lecture : \n\n${playlist.currentlyPlaying.title}\n**[▶️ En cours de lecture]**`;
+      }
+      message.reply(replyMessage);
+    }
+  }
+
+  async emptyPlaylist(message) {
+    const guildId = message.guildId;
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
+
+    if (playlist.queue.length > 0) {
+      playlist.queue = [];
+
+      message.reply('La playlist a été vidée.');
+    } else {
+      message.reply('La playlist est déjà vide.');
+    }
+  }
+
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
 
@@ -70,8 +107,10 @@ export class PlaylistService {
         oldState.status === AudioPlayerStatus.Playing &&
         newState.status === AudioPlayerStatus.Idle
       ) {
-        const finishedTrack = playlist.queue.shift();
-        console.log(`Retrait de ${finishedTrack.title}`);
+        console.log('oldState = ' + oldState.status);
+        console.log('newState = ' + newState.status);
+
+        playlist.queue.shift();
 
         if (playlist.queue.length > 0) {
           await this.playNextTrack(guildId);
@@ -84,16 +123,5 @@ export class PlaylistService {
         }
       }
     });
-  }
-
-  async showPlaylist(message) {
-    const guildId = message.guildId;
-    const playlist = this.guildService.getOrCreatePlaylist(guildId);
-
-    if (playlist.queue.length > 0) {
-      message.reply(buildMessageToShowPlaylist(playlist));
-    } else {
-      message.reply('La playlist est actuellement vide.');
-    }
   }
 }

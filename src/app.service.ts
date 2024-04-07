@@ -29,10 +29,16 @@ export class AppService {
     const commandActions = {
       [COMMANDS.PLAY.trigger]: () => this.musicPlayerService.play(message),
       [COMMANDS.STOP.trigger]: () => this.musicPlayerService.stop(message),
+      [COMMANDS.PAUSE.trigger]: () => this.musicPlayerService.pause(message),
+      [COMMANDS.RESUME.trigger]: () => this.musicPlayerService.resume(message),
       [COMMANDS.ADD.trigger]: () =>
         this.playlistService.addTrackToPlaylist(message),
       [COMMANDS.PLAYLIST.trigger]: () =>
         this.playlistService.showPlaylist(message),
+      [COMMANDS.EMPTY.trigger]: () =>
+        this.playlistService.emptyPlaylist(message),
+      [COMMANDS.NEXT.trigger]: () =>
+        this.playlistService.moveToNextTrack(message),
       [COMMANDS.DISCONNECT.trigger]: () =>
         this.voiceConnectionService.disconnect(message),
       [COMMANDS.HELP.trigger]: () => this.helpService.listAllCommands(message),
