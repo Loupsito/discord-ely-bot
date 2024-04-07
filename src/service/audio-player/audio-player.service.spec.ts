@@ -7,7 +7,6 @@ import { MUSIC_MESSAGES } from '../../discord-messages.type';
 import { GuildModule } from '../guild/guild.module';
 import { GuildService } from '../guild/guild.service';
 import { PlaylistService } from '../playlist/playlist.service';
-import { DiscordModule } from '../discord/discord.module';
 import { discordServiceMock } from '../../mock/discord-service.mock';
 import { DiscordService } from '../discord/discord.service';
 

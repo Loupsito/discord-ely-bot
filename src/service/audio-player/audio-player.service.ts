@@ -8,7 +8,6 @@ import {
   isYoutubeUrl,
   replyErrorMessageIfNotInVoiceChannel,
 } from '../../util/music-command.utils';
-import { Message } from 'discord.js';
 import { DiscordService } from '../discord/discord.service';
 import { PlaylistService } from '../playlist/playlist.service';
 

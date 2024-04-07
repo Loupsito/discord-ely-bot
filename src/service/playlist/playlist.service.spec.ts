@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PlaylistService } from './playlist.service';
 import { GuildService } from '../guild/guild.service';
-import { forwardRef, Inject } from '@nestjs/common';
 import { AudioPlayerService } from '../audio-player/audio-player.service';
 import { YoutubeService } from '../youtube/youtube-service.service';
 import { DiscordService } from '../discord/discord.service';
-import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
 import { YoutubeModule } from '../youtube/youtube.module';
 import { GuildModule } from '../guild/guild.module';
 
