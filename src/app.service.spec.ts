@@ -4,7 +4,7 @@ import { DiscordService } from './service/discord/discord.service';
 import { MusicPlayerService } from './service/music-player/music-player.service';
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
 import { HelpService } from './service/help/help.service';
-import { COMMANDS } from './discord-command.type';
+import { COMMANDS_AUDIO_PLAYER } from './discord-command.type';
 import { YoutubeService } from './service/youtube/youtube-service.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
 import { discordServiceMock } from './mock/discord-service.mock';
@@ -59,7 +59,7 @@ describe('AppService', () => {
   describe('handleMessageCreate', () => {
     it('should call play on MUSIC command', async () => {
       const message = mockMessage(
-        `${COMMANDS.PLAY.trigger} https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
+        `${COMMANDS_AUDIO_PLAYER.PLAY.trigger} https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
       );
       const spyPlay = jest.spyOn(musicPlayerService, 'play');
       await appService.handleMessageCreate(message);
@@ -67,21 +67,21 @@ describe('AppService', () => {
     });
 
     it('should call stop on STOP command', async () => {
-      const message = mockMessage(COMMANDS.STOP.trigger);
+      const message = mockMessage(COMMANDS_AUDIO_PLAYER.STOP.trigger);
       const spyStop = jest.spyOn(musicPlayerService, 'stop');
       await appService.handleMessageCreate(message);
       expect(spyStop).toHaveBeenCalledWith(message);
     });
 
     it('should call disconnect on DISCONNECT command', async () => {
-      const message = mockMessage(COMMANDS.DISCONNECT.trigger);
+      const message = mockMessage(COMMANDS_AUDIO_PLAYER.DISCONNECT.trigger);
       const spyDisconnect = jest.spyOn(voiceConnectionService, 'disconnect');
       await appService.handleMessageCreate(message);
       expect(spyDisconnect).toHaveBeenCalledWith(message);
     });
 
     it('should call listAllCommands on HELP command', async () => {
-      const message = mockMessage(COMMANDS.HELP.trigger);
+      const message = mockMessage(COMMANDS_AUDIO_PLAYER.HELP.trigger);
       const spyListCommands = jest.spyOn(helpService, 'listAllCommands');
       await appService.handleMessageCreate(message);
       expect(spyListCommands).toHaveBeenCalledWith(message);
