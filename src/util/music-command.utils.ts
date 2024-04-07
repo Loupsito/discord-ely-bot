@@ -19,13 +19,16 @@ export const isYoutubeUrl = (url: string) => {
 export const buildMessageToShowPlaylist = (playlist) => {
   let response = '**Playlist Actuelle:**\n';
 
-  if (playlist.currentlyPlaying) {
-    response += `**▶️ En cours de lecture :** ${playlist.currentlyPlaying.title}\n`;
-  }
-
+  // Vérifiez si une piste est actuellement en lecture pour ajuster l'affichage
   playlist.queue.forEach((track, index) => {
-    const displayIndex = playlist.currentlyPlaying ? index + 2 : index + 1;
-    response += `${displayIndex}. ${track.title}\n`;
+    if (playlist.currentlyPlaying && index === 0) {
+      // Pour la première piste, qui est en cours de lecture
+      response += `1. ${track.title}\n**[▶️ En cours de lecture]**\n\n`;
+    } else {
+      // Pour les pistes suivantes, ou toutes les pistes si aucune n'est en cours de lecture
+      const displayIndex = playlist.currentlyPlaying ? index + 1 : index + 1;
+      response += `${displayIndex}. ${track.title}\n`;
+    }
   });
 
   return response;
