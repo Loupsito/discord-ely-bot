@@ -5,6 +5,7 @@ import { MusicPlayerService } from '../music-player/music-player.service';
 import {
   buildMessageToShowPlaylist,
   extractUrlFromMessageContent,
+  replyErrorMessageIfNotInVoiceChannel,
 } from '../../util/music-command.utils';
 import { YoutubeService } from '../youtube/youtube-service.service';
 import { DiscordService } from '../discord/discord.service';
@@ -20,6 +21,8 @@ export class PlaylistService {
   ) {}
 
   async addTrackToPlaylist(message) {
+    await replyErrorMessageIfNotInVoiceChannel(message);
+
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(
       message.guildId,
     );
@@ -64,6 +67,8 @@ export class PlaylistService {
   }
 
   async moveToNextTrack(message) {
+    await replyErrorMessageIfNotInVoiceChannel(message);
+
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(
       message.guildId,
     );
@@ -87,6 +92,8 @@ export class PlaylistService {
   }
 
   async emptyPlaylist(message) {
+    await replyErrorMessageIfNotInVoiceChannel(message);
+
     const guildId = message.guildId;
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
 

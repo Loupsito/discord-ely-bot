@@ -4,7 +4,10 @@ import { YoutubeService } from '../youtube/youtube-service.service';
 import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
 import { MUSIC_MESSAGES } from '../../discord-messages.type';
 import { GuildService } from '../guild/guild.service';
-import { isYoutubeUrl } from '../../util/music-command.utils';
+import {
+  isYoutubeUrl,
+  replyErrorMessageIfNotInVoiceChannel,
+} from '../../util/music-command.utils';
 import { Message } from 'discord.js';
 import { DiscordService } from '../discord/discord.service';
 import { PlaylistService } from '../playlist/playlist.service';
@@ -22,7 +25,7 @@ export class MusicPlayerService {
 
   async play(message: Message, urlGiven?: string) {
     try {
-      await this.replyErrorMessageIfNotInVoiceChannel(message);
+      await replyErrorMessageIfNotInVoiceChannel(message);
       const url = urlGiven
         ? urlGiven
         : await this.extractUrlFromMessageContent(message);
@@ -44,7 +47,7 @@ export class MusicPlayerService {
 
   async stop(message: any) {
     try {
-      await this.replyErrorMessageIfNotInVoiceChannel(message);
+      await replyErrorMessageIfNotInVoiceChannel(message);
 
       const musicPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
@@ -74,7 +77,7 @@ export class MusicPlayerService {
   }
 
   async pause(message) {
-    await this.replyErrorMessageIfNotInVoiceChannel(message);
+    await replyErrorMessageIfNotInVoiceChannel(message);
     const guildId = message.guildId;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
@@ -89,7 +92,7 @@ export class MusicPlayerService {
   }
 
   async resume(message) {
-    await this.replyErrorMessageIfNotInVoiceChannel(message);
+    await replyErrorMessageIfNotInVoiceChannel(message);
     const guildId = message.guildId;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
@@ -110,16 +113,6 @@ export class MusicPlayerService {
       }
 
       resolve(commands[1]);
-    });
-  }
-
-  private replyErrorMessageIfNotInVoiceChannel(message) {
-    return new Promise<void>((resolve, reject) => {
-      const voiceChannel = message.member.voice.channel;
-      if (!voiceChannel) {
-        reject(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL);
-      }
-      resolve();
     });
   }
 }

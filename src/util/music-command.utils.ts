@@ -12,6 +12,16 @@ export const extractUrlFromMessageContent = (message): Promise<string> => {
   });
 };
 
+export const replyErrorMessageIfNotInVoiceChannel = (message) => {
+  return new Promise<void>((resolve, reject) => {
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) {
+      reject(MUSIC_MESSAGES.USER_MUST_BE_IN_VOICE_CHANNEL);
+    }
+    resolve();
+  });
+};
+
 export const isYoutubeUrl = (url: string) => {
   return url.startsWith('https://www.youtube.com/');
 };
