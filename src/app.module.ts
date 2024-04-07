@@ -10,6 +10,7 @@ import { GuildModule } from './service/guild/guild.module';
 import { GuildService } from './service/guild/guild.service';
 import { PlaylistService } from './service/playlist/playlist.service';
 import { AudioPlayerModule } from './service/audio-player/audio-player.module';
+import { PlaylistModule } from './service/playlist/playlist.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AudioPlayerModule } from './service/audio-player/audio-player.module';
     YoutubeModule,
     GuildModule,
     AudioPlayerModule,
+    PlaylistModule,
   ],
   providers: [
     AppService,
