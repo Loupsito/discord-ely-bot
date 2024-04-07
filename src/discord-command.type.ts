@@ -13,6 +13,7 @@ type DiscordCommand =
   | 'PLAYLIST'
   | 'EMPTY'
   | 'NEXT'
+  | 'RESUMEPLAYLIST'
   | 'DISCONNECT'
   | 'HELP';
 
@@ -57,6 +58,11 @@ export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
     trigger: '!next',
     description: `Commande qui permet de passer à la musique suivante dans la playlist`,
     example: '!next',
+  },
+  RESUMEPLAYLIST: {
+    trigger: '!resumePlaylist',
+    description: `Commande qui permet de reprendre la lecture de la playlist précédemment mis en pause`,
+    example: '!resumePlaylist',
   },
   DISCONNECT: {
     trigger: '!disconnect',

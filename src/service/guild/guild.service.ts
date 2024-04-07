@@ -10,6 +10,7 @@ export interface Playlist {
   textChannel: any;
   queue: Music[];
   currentlyPlaying: Music;
+  isPaused: boolean;
 }
 
 export interface Music {
@@ -59,6 +60,7 @@ export class GuildService {
         textChannel: null,
         queue: [],
         currentlyPlaying: null,
+        isPaused: false,
       };
       this.guildPlaylists.set(guildId, newPlaylist);
     }

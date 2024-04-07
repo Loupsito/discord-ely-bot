@@ -62,11 +62,13 @@ export class PlaylistService {
       await this.musicPlayerService.play(
         playlist.textChannel,
         currentTrack.url,
+        true,
       );
     }
   }
 
   async moveToNextTrack(message) {
+    await this.replyErrorMessageIfPlaylistIsNotCurrentlyPlaying(message);
     await replyErrorMessageIfNotInVoiceChannel(message);
 
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(
@@ -104,6 +106,41 @@ export class PlaylistService {
     } else {
       message.reply('La playlist est déjà vide.');
     }
+  }
+
+  async pauseCurrentPlaylistIfNeeded(message) {
+    const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
+    if (playlist.queue.length > 0 || playlist.currentlyPlaying) {
+      playlist.isPaused = true;
+      await this.discordService.sendMessageToChannel(
+        playlist.textChannel.channelId,
+        'La playlist a été mis en pause.\nVous pourrez reprendre sa lecture avec la commande **!resumePlaylist**',
+      );
+    }
+  }
+
+  async resumePlaylist(message) {
+    const guildId = message.guildId;
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
+    if (playlist.isPaused && playlist.queue.length > 0) {
+      playlist.isPaused = false;
+      await this.playNextTrack(guildId);
+      message.reply('La playlist reprend.');
+    } else {
+      message.reply('Aucune playlist à reprendre.');
+    }
+  }
+
+  private replyErrorMessageIfPlaylistIsNotCurrentlyPlaying(message) {
+    return new Promise<void>((resolve, reject) => {
+      const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
+      if (playlist.isPaused) {
+        reject(
+          'La playlist est actuellement en pause. Veuillez relancer la playlist en exécutant la commande **!resumePlaylist**',
+        );
+      }
+      resolve();
+    });
   }
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {

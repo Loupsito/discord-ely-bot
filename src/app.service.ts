@@ -39,6 +39,8 @@ export class AppService {
         this.playlistService.emptyPlaylist(message),
       [COMMANDS.NEXT.trigger]: () =>
         this.playlistService.moveToNextTrack(message),
+      [COMMANDS.RESUMEPLAYLIST.trigger]: () =>
+        this.playlistService.resumePlaylist(message),
       [COMMANDS.DISCONNECT.trigger]: () =>
         this.voiceConnectionService.disconnect(message),
       [COMMANDS.HELP.trigger]: () => this.helpService.listAllCommands(message),
@@ -54,9 +56,7 @@ export class AppService {
       }
     } catch (e) {
       this.logger.error(`Error when running command ${command}`, e);
-      message.reply(
-        `Une erreur est survenu lors de l'exécution de la commande ${command}`,
-      );
+      message.reply(e);
     }
   }
 }

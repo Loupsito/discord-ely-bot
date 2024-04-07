@@ -23,12 +23,20 @@ export class MusicPlayerService {
     private playlistService: PlaylistService,
   ) {}
 
-  async play(message: Message, urlGiven?: string) {
+  async play(
+    message: Message,
+    urlGiven?: string,
+    fromPlaylist: boolean = false,
+  ) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
       const url = urlGiven
         ? urlGiven
         : await this.extractUrlFromMessageContent(message);
+
+      if (!fromPlaylist) {
+        await this.playlistService.pauseCurrentPlaylistIfNeeded(message);
+      }
 
       const musicPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
