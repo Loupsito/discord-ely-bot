@@ -20,13 +20,12 @@ type DiscordCommand =
 export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
   PLAY: {
     trigger: '!play',
-    description: 'Commande qui permet de jouer une musique venant de Youtube.',
+    description: `Commande qui permet de jouer une musique venant de Youtube. Si une playlist est en cours de lecture, cette commande va mettre en pause cette dernière.`,
     example: '!play <youtube-url>',
   },
   STOP: {
     trigger: '!stop',
-    description:
-      'Commande qui permet de stopper une musique en cours de lecture.',
+    description: `Commande qui permet de stopper une musique en cours de lecture. Vide aussi la playlist en s'il y en a une`,
     example: '!stop',
   },
   PAUSE: {
@@ -51,12 +50,12 @@ export const COMMANDS: Record<DiscordCommand, DiscordCommandType> = {
   },
   EMPTY: {
     trigger: '!empty',
-    description: `Commande qui permet de vider la playlist en cours`,
+    description: `Commande qui permet de vider la playlist en cours (cette commande ne supprime pas la musique en cours de lecture)`,
     example: '!empty',
   },
   NEXT: {
     trigger: '!next',
-    description: `Commande qui permet de passer à la musique suivante dans la playlist`,
+    description: `Commande qui permet de passer à la musique suivante dans la playlist. Si playlist est en pause, il faudra d'abord relancer cette dernière en exécutant la commande **!resumePlaylist**`,
     example: '!next',
   },
   RESUMEPLAYLIST: {
