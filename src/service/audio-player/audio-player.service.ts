@@ -25,14 +25,14 @@ export class AudioPlayerService {
   public async play(message, urlGiven?: string, fromPlaylist: boolean = false) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
-      const url = urlGiven
-        ? urlGiven
-        : await this.extractUrlFromMessageContent(message);
 
       if (!fromPlaylist) {
         await this.playlistService.pauseCurrentPlaylistIfNeeded(message);
       }
 
+      const url = urlGiven
+        ? urlGiven
+        : await this.extractUrlFromMessageContent(message);
       const audioPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
       );
@@ -51,12 +51,9 @@ export class AudioPlayerService {
   public async stop(message: any) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
-
       const audioPlayer = this.guildService.getOrCreateAudioPlayer(
         message.guildId,
       );
-      const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
-
       let replyMessage = '';
 
       if (audioPlayer.state.status !== AudioPlayerStatus.Idle) {
@@ -68,6 +65,7 @@ export class AudioPlayerService {
         );
       }
 
+      const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
       if (playlist.queue.length > 0) {
         playlist.queue = [];
         replyMessage += ' et la playlist vidée';
