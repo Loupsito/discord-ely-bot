@@ -29,7 +29,6 @@ export const isYoutubeUrl = (url: string) => {
 export const buildMessageToShowPlaylist = (playlist) => {
   let response = '**Playlist Actuelle:**\n';
 
-  // Toujours afficher la chanson précédemment en lecture au début, même si la playlist est en pause
   if (playlist.currentlyPlaying) {
     const playingStatus = playlist.isPaused
       ? '[⏸️ En pause]'
@@ -37,11 +36,8 @@ export const buildMessageToShowPlaylist = (playlist) => {
     response += `1. ${playlist.currentlyPlaying.title}\n**${playingStatus}**\n\n`;
   }
 
-  // Afficher les autres pistes de la playlist
   playlist.queue.forEach((track, index) => {
-    // Ajuster l'index si une chanson est actuellement jouée ou était jouée
     const displayIndex = index + 1;
-    // Pour ne pas répéter le morceau en cours de lecture s'il est le premier de la liste
     if (index > 0 || !playlist.currentlyPlaying) {
       response += `${displayIndex}. ${track.title}\n`;
     }
