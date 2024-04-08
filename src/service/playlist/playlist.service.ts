@@ -20,7 +20,7 @@ export class PlaylistService {
     private discordService: DiscordService,
   ) {}
 
-  async addTrackToPlaylist(message) {
+  public async addTrackToPlaylist(message) {
     await replyErrorMessageIfNotInVoiceChannel(message);
 
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(
@@ -69,7 +69,7 @@ export class PlaylistService {
     }
   }
 
-  async moveToNextTrack(message) {
+  public async moveToNextTrack(message) {
     await this.replyErrorMessageIfPlaylistIsNotCurrentlyPlaying(message);
     await replyErrorMessageIfNotInVoiceChannel(message);
 
@@ -95,7 +95,7 @@ export class PlaylistService {
     }
   }
 
-  async emptyPlaylist(message) {
+  public async emptyPlaylist(message) {
     await replyErrorMessageIfNotInVoiceChannel(message);
 
     const guildId = message.guildId;
@@ -121,7 +121,7 @@ export class PlaylistService {
     }
   }
 
-  async resumePlaylist(message) {
+  public async resumePlaylist(message) {
     const guildId = message.guildId;
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
     if (playlist.isPaused && playlist.queue.length > 0) {

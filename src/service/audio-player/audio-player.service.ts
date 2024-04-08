@@ -22,7 +22,7 @@ export class AudioPlayerService {
     private playlistService: PlaylistService,
   ) {}
 
-  async play(message, urlGiven?: string, fromPlaylist: boolean = false) {
+  public async play(message, urlGiven?: string, fromPlaylist: boolean = false) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
       const url = urlGiven
@@ -48,7 +48,7 @@ export class AudioPlayerService {
     }
   }
 
-  async stop(message: any) {
+  public async stop(message: any) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
 
@@ -79,7 +79,7 @@ export class AudioPlayerService {
     }
   }
 
-  async pause(message) {
+  public async pause(message) {
     await replyErrorMessageIfNotInVoiceChannel(message);
     const guildId = message.guildId;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
@@ -94,7 +94,7 @@ export class AudioPlayerService {
     }
   }
 
-  async resume(message) {
+  public async resume(message) {
     await replyErrorMessageIfNotInVoiceChannel(message);
     const guildId = message.guildId;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
