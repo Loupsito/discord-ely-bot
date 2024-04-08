@@ -146,13 +146,12 @@ export class PlaylistService {
   }
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
-    const playlist = this.guildService.getOrCreatePlaylist(guildId);
-
     audioPlayer.on('stateChange', async (oldState, newState) => {
       if (
         oldState.status === AudioPlayerStatus.Playing &&
         newState.status === AudioPlayerStatus.Idle
       ) {
+        const playlist = this.guildService.getOrCreatePlaylist(guildId);
         if (playlist.queue.length > 0) {
           playlist.queue.shift();
           await this.playNextTrack(guildId);
