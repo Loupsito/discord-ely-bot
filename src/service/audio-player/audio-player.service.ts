@@ -10,6 +10,7 @@ import {
 } from '../../util/music-command.utils';
 import { DiscordService } from '../discord/discord.service';
 import { PlaylistService } from '../playlist/playlist.service';
+import { COMMANDS_PLAYLIST } from '../../discord-command.type';
 
 @Injectable()
 export class AudioPlayerService {
@@ -66,9 +67,14 @@ export class AudioPlayerService {
       }
 
       const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
-      if (playlist.queue.length > 0) {
-        playlist.queue = [];
-        replyMessage += ' et la playlist vidée';
+
+      if (playlist.isPaused) {
+        replyMessage += ` mais la playlist est toujours diponible. Vous pouvez la relancer avec la commande **${COMMANDS_PLAYLIST.RESUMEPLAYLIST.trigger}**`;
+      } else {
+        if (playlist.queue.length > 0) {
+          playlist.queue = [];
+          replyMessage += ' et la playlist vidée';
+        }
       }
 
       return message.reply(replyMessage);
