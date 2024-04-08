@@ -9,6 +9,7 @@ import {
 } from '../../util/music-command.utils';
 import { YoutubeService } from '../youtube/youtube-service.service';
 import { DiscordService } from '../discord/discord.service';
+import { COMMANDS_PLAYLIST } from '../../discord-command.type';
 
 @Injectable()
 export class PlaylistService {
@@ -56,7 +57,7 @@ export class PlaylistService {
     const queue = playlist.queue;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
-    if (playlist && queue.length > 0) {
+    if (playlist && queue.length > 0 && !playlist.isPaused) {
       const currentTrack = queue[0];
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
@@ -73,10 +74,10 @@ export class PlaylistService {
     await this.replyErrorMessageIfPlaylistIsNotCurrentlyPlaying(message);
     await replyErrorMessageIfNotInVoiceChannel(message);
 
-    const audioPlayer = this.guildService.getOrCreateAudioPlayer(
-      message.guildId,
-    );
-    audioPlayer.stop();
+    const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
+    playlist.queue.shift();
+    await this.playNextTrack(message.guildId);
+
     message.reply(`Passage à la musique suivante.`);
   }
 
@@ -116,7 +117,7 @@ export class PlaylistService {
       playlist.isPaused = true;
       await this.discordService.sendMessageToChannel(
         playlist.textChannel.channelId,
-        'La playlist a été mis en pause.\nVous pourrez reprendre sa lecture avec la commande **!resumePlaylist**',
+        `La playlist a été mis en pause.\nVous pourrez reprendre sa lecture avec la commande **${COMMANDS_PLAYLIST.RESUMEPLAYLIST.trigger}**`,
       );
     }
   }
@@ -138,7 +139,7 @@ export class PlaylistService {
       const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
       if (playlist.isPaused) {
         reject(
-          'La playlist est actuellement en pause. Veuillez relancer la playlist en exécutant la commande **!resumePlaylist**',
+          `La playlist est actuellement en pause. Veuillez relancer la playlist en exécutant la commande **${COMMANDS_PLAYLIST.RESUMEPLAYLIST.trigger}**`,
         );
       }
       resolve();
