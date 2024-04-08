@@ -9,8 +9,8 @@ import { YoutubeModule } from './service/youtube/youtube.module';
 import { GuildModule } from './service/guild/guild.module';
 import { GuildService } from './service/guild/guild.service';
 import { PlaylistService } from './service/playlist/playlist.service';
-import { AudioPlayerModule } from './service/audio-player/audio-player.module';
 import { PlaylistModule } from './service/playlist/playlist.module';
+import { AudioPlayerService } from './service/audio-player/audio-player.service';
 
 @Module({
   imports: [
@@ -19,7 +19,6 @@ import { PlaylistModule } from './service/playlist/playlist.module';
     DiscordModule,
     YoutubeModule,
     GuildModule,
-    AudioPlayerModule,
     PlaylistModule,
   ],
   providers: [
@@ -28,6 +27,7 @@ import { PlaylistModule } from './service/playlist/playlist.module';
     HelpService,
     GuildService,
     PlaylistService,
+    AudioPlayerService,
   ],
 })
 export class AppModule {}

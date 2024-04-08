@@ -11,6 +11,7 @@ export interface Playlist {
   queue: Music[];
   currentlyPlaying: Music;
   isPaused: boolean;
+  isAlreadyMarkedAsEmpty: boolean;
 }
 
 export interface Music {
@@ -57,6 +58,7 @@ export class GuildService {
         queue: [],
         currentlyPlaying: null,
         isPaused: false,
+        isAlreadyMarkedAsEmpty: true,
       };
       this.guildPlaylists.set(guildId, newPlaylist);
     }

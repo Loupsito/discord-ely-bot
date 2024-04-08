@@ -39,6 +39,8 @@ export class PlaylistService {
       playlist.textChannel = message;
     }
 
+    playlist.isAlreadyMarkedAsEmpty = false;
+
     if (audioPlayer.state.status !== AudioPlayerStatus.Playing) {
       message.reply(
         `Ajout à la playlist de **${videoTitle}** et lancement de la lecture`,
@@ -151,14 +153,11 @@ export class PlaylistService {
         oldState.status === AudioPlayerStatus.Playing &&
         newState.status === AudioPlayerStatus.Idle
       ) {
-        console.log('oldState = ' + oldState.status);
-        console.log('newState = ' + newState.status);
-
-        playlist.queue.shift();
-
         if (playlist.queue.length > 0) {
+          playlist.queue.shift();
           await this.playNextTrack(guildId);
-        } else {
+        } else if (!playlist.isAlreadyMarkedAsEmpty) {
+          playlist.isAlreadyMarkedAsEmpty = true;
           await this.discordService.sendMessageToChannel(
             playlist.textChannel.channelId,
             'La playlist est vide',
