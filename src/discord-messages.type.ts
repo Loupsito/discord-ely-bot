@@ -4,7 +4,7 @@ export const GENERIC_MESSAGES = {
 };
 
 export const MUSIC_MESSAGES = {
-  CURRENTLY_PLAYING: `En cours de lecture`,
+  CURRENTLY_PLAYING: `[▶️ En cours de lecture]`,
   MUSIC_STOPPED: `La musique a été arrêtée`,
   MUST_GIVE_YOUTUBE_URL: `Il faut fournir une URL Youtube.\n **Exemple :** !play https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
   USER_MUST_BE_IN_VOICE_CHANNEL: `Vous devez être dans un canal vocal pour utiliser cette commande`,
