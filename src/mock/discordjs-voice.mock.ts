@@ -12,7 +12,7 @@ export const discordjsVoiceMock = {
     play: jest.fn(),
     stop: jest.fn(),
     state: {
-      status: 'idle',
+      status: 'playing',
     },
   })),
   createAudioResource: jest.fn(),

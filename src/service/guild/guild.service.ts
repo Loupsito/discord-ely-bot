@@ -6,19 +6,33 @@ import {
   VoiceConnection,
 } from '@discordjs/voice';
 
+export interface Playlist {
+  textChannel: any;
+  queue: Music[];
+  currentlyPlaying: Music;
+  isPaused: boolean;
+  isAlreadyMarkedAsEmpty: boolean;
+}
+
+export interface Music {
+  url: string;
+  title: string;
+}
+
 @Injectable()
 export class GuildService {
-  private guildMusicPlayers = new Map<string, AudioPlayer>();
+  private guildAudioPlayers = new Map<string, AudioPlayer>();
   private guildVoiceConnections = new Map<string, VoiceConnection>();
+  private guildPlaylists = new Map<string, Playlist>();
 
   constructor() {}
 
   getOrCreateAudioPlayer(guildId: string): AudioPlayer {
-    if (!this.guildMusicPlayers.has(guildId)) {
+    if (!this.guildAudioPlayers.has(guildId)) {
       const audioPlayer = createAudioPlayer();
-      this.guildMusicPlayers.set(guildId, audioPlayer);
+      this.guildAudioPlayers.set(guildId, audioPlayer);
     }
-    return this.guildMusicPlayers.get(guildId);
+    return this.guildAudioPlayers.get(guildId);
   }
 
   getOrCreateVoiceConnection(
@@ -37,7 +51,23 @@ export class GuildService {
     return this.guildVoiceConnections.get(guildId);
   }
 
-  deleteGuildConnection(guildId: string) {
+  getOrCreatePlaylist(guildId: string) {
+    if (!this.guildPlaylists.has(guildId)) {
+      const newPlaylist: Playlist = {
+        textChannel: null,
+        queue: [],
+        currentlyPlaying: null,
+        isPaused: false,
+        isAlreadyMarkedAsEmpty: true,
+      };
+      this.guildPlaylists.set(guildId, newPlaylist);
+    }
+    return this.guildPlaylists.get(guildId);
+  }
+
+  purgeAll(guildId: string) {
     this.guildVoiceConnections.delete(guildId);
+    this.guildPlaylists.delete(guildId);
+    this.guildAudioPlayers.delete(guildId);
   }
 }

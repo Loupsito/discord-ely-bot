@@ -1,4 +1,5 @@
 export const mockMessage = (content: string) => ({
+  channelId: 'channelId',
   guildId: 'guildId123',
   content,
   author: {

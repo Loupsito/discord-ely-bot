@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HelpService } from './help.service';
-import { COMMANDS } from '../../discord-command.type';
+import { COMMANDS_AUDIO_PLAYER } from '../../discord-command.type';
 
 describe('HelpService', () => {
   let service: HelpService;
@@ -22,7 +22,7 @@ describe('HelpService', () => {
 
     expect(replyCallArgument).toContain('Voici les commandes disponibles :');
 
-    Object.values(COMMANDS).forEach((command) => {
+    Object.values(COMMANDS_AUDIO_PLAYER).forEach((command) => {
       expect(replyCallArgument).toContain(command.trigger);
       expect(replyCallArgument).toContain(command.description);
       expect(replyCallArgument).toContain(command.example);
@@ -33,7 +33,7 @@ describe('HelpService', () => {
     service.listAllCommands(mockMessage);
     const replyCallArgument = mockMessage.reply.mock.calls[0][0];
 
-    Object.values(COMMANDS).forEach((command) => {
+    Object.values(COMMANDS_AUDIO_PLAYER).forEach((command) => {
       const expectedFormat = `**➡️ ${command.trigger}: ${command.description}**\nExemple : ${command.example}`;
       expect(replyCallArgument).toContain(expectedFormat);
     });

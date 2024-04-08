@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { MusicPlayerService } from './service/music-player/music-player.service';
 import { AppService } from './app.service';
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
 import { ConfigModule } from '@nestjs/config';
@@ -9,6 +8,9 @@ import { HelpService } from './service/help/help.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
 import { GuildModule } from './service/guild/guild.module';
 import { GuildService } from './service/guild/guild.service';
+import { PlaylistService } from './service/playlist/playlist.service';
+import { PlaylistModule } from './service/playlist/playlist.module';
+import { AudioPlayerService } from './service/audio-player/audio-player.service';
 
 @Module({
   imports: [
@@ -17,13 +19,15 @@ import { GuildService } from './service/guild/guild.service';
     DiscordModule,
     YoutubeModule,
     GuildModule,
+    PlaylistModule,
   ],
   providers: [
-    MusicPlayerService,
     AppService,
     VoiceConnectionService,
     HelpService,
     GuildService,
+    PlaylistService,
+    AudioPlayerService,
   ],
 })
 export class AppModule {}

@@ -1,12 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MusicPlayerService } from './music-player.service';
+import { AudioPlayerService } from './audio-player.service';
 import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
-import { AudioPlayerStatus } from '@discordjs/voice';
 import { mockMessage } from '../../mock/message.mock';
 import { YoutubeModule } from '../youtube/youtube.module';
 import { MUSIC_MESSAGES } from '../../discord-messages.type';
 import { GuildModule } from '../guild/guild.module';
 import { GuildService } from '../guild/guild.service';
+import { PlaylistService } from '../playlist/playlist.service';
+import { discordServiceMock } from '../../mock/discord-service.mock';
+import { DiscordService } from '../discord/discord.service';
 
 jest.mock('@discordjs/voice', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -19,22 +21,28 @@ jest.mock('ytdl-core', () => {
   return require('../../mock/ytdl-core.mock').default;
 });
 
-describe('MusicPlayerService', () => {
-  let service: MusicPlayerService;
+describe('AudioPlayerService', () => {
+  let service: AudioPlayerService;
   let voiceConnectionService: VoiceConnectionService;
-  let guildService: GuildService;
+  let discordService: DiscordService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [YoutubeModule, GuildModule],
-      providers: [MusicPlayerService, VoiceConnectionService, GuildService],
+      providers: [
+        VoiceConnectionService,
+        AudioPlayerService,
+        GuildService,
+        PlaylistService,
+        discordServiceMock,
+      ],
     }).compile();
 
-    service = module.get<MusicPlayerService>(MusicPlayerService);
+    service = module.get<AudioPlayerService>(AudioPlayerService);
     voiceConnectionService = module.get<VoiceConnectionService>(
       VoiceConnectionService,
     );
-    guildService = module.get<GuildService>(GuildService);
+    discordService = module.get<DiscordService>(DiscordService);
   });
 
   describe('play', () => {
@@ -42,6 +50,10 @@ describe('MusicPlayerService', () => {
       const url = 'https://www.youtube.com/';
       const videoTitle = 'Video Title';
       const spyJoinAndPlay = jest.spyOn(voiceConnectionService, 'joinAndPlay');
+      const spySendMessageToChannel = jest.spyOn(
+        discordService,
+        'sendMessageToChannel',
+      );
       const message = mockMessage(`!play ${url}`);
 
       await service.play(message);
@@ -51,7 +63,8 @@ describe('MusicPlayerService', () => {
         url,
         expect.anything(),
       );
-      expect(message.reply).toHaveBeenCalledWith(
+      expect(spySendMessageToChannel).toHaveBeenCalledWith(
+        'channelId',
         expect.stringContaining(videoTitle),
       );
     });
