@@ -64,7 +64,6 @@ export class PlaylistService {
       const currentTrack = queue[0];
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
-      playlist.queue.shift();
 
       await this.audioPlayerService.play(
         playlist.textChannel,
@@ -165,8 +164,13 @@ export class PlaylistService {
           newState.status === AudioPlayerStatus.Idle
         ) {
           if (playlist.queue.length > 0) {
+            playlist.queue.shift();
             await this.playNextTrack(guildId);
-          } else if (!playlist.isMarkedAsEmpty) {
+          } else if (playlist.queue.length === 1) {
+            playlist.queue.shift();
+          }
+
+          if (playlist.queue.length === 0 && !playlist.isMarkedAsEmpty) {
             playlist.isMarkedAsEmpty = true;
             await this.discordService.sendMessageToChannel(
               playlist.textChannel.channelId,
