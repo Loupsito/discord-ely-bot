@@ -19,11 +19,8 @@ export class VoiceConnectionService {
   ) {}
 
   joinAndPlay(message: any, url: string, player: AudioPlayer) {
-    const voiceConnection = this.guildService.getOrCreateVoiceConnection(
-      message.guildId,
-      message.member.voice.channel.id,
-      message.member.voice.channel.guild.voiceAdapterCreator,
-    );
+    const voiceConnection =
+      this.guildService.getOrCreateVoiceConnection(message);
     const stream = this.youtubeService.getStream(url);
     const resource = createAudioResource(stream);
     player.play(resource);
@@ -31,11 +28,8 @@ export class VoiceConnectionService {
   }
 
   disconnect(message) {
-    const voiceConnection = this.guildService.getOrCreateVoiceConnection(
-      message.guildId,
-      message.member.voice.channel.id,
-      message.member.voice.channel.guild.voiceAdapterCreator,
-    );
+    const voiceConnection =
+      this.guildService.getOrCreateVoiceConnection(message);
 
     if (
       voiceConnection &&
