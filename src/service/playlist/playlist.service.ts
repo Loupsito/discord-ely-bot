@@ -64,6 +64,7 @@ export class PlaylistService {
       const currentTrack = queue[0];
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
+      playlist.queue.shift();
 
       await this.audioPlayerService.play(
         playlist.textChannel,
@@ -80,8 +81,12 @@ export class PlaylistService {
     const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
     playlist.queue.shift();
 
-    message.reply(`Passage à la musique suivante.`);
-    await this.playNextTrack(message.guildId);
+    if (playlist.queue.length === 0) {
+      message.reply(`La playlist est actuellement vide`);
+    } else {
+      message.reply(`Passage à la musique suivante.`);
+      await this.playNextTrack(message.guildId);
+    }
   }
 
   async showPlaylist(message) {
@@ -151,28 +156,26 @@ export class PlaylistService {
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
-    const listener = async (oldState, newState) => {
-      playlist.isListenerAttached = true;
-      if (
-        oldState.status === AudioPlayerStatus.Playing &&
-        newState.status === AudioPlayerStatus.Idle
-      ) {
-        if (playlist.queue.length > 0) {
-          playlist.queue.shift();
-          await this.playNextTrack(guildId);
-        } else if (!playlist.isMarkedAsEmpty) {
-          playlist.isMarkedAsEmpty = true;
-          await this.discordService.sendMessageToChannel(
-            playlist.textChannel.channelId,
-            'La playlist est vide',
-          );
-          delete playlist.currentlyPlaying;
-        }
-      }
-    };
     if (!playlist.isListenerAttached) {
       console.log('=======> ListenerAttached');
-      audioPlayer.on('stateChange', listener);
+      audioPlayer.on('stateChange', async (oldState, newState) => {
+        playlist.isListenerAttached = true;
+        if (
+          oldState.status === AudioPlayerStatus.Playing &&
+          newState.status === AudioPlayerStatus.Idle
+        ) {
+          if (playlist.queue.length > 0) {
+            await this.playNextTrack(guildId);
+          } else if (!playlist.isMarkedAsEmpty) {
+            playlist.isMarkedAsEmpty = true;
+            await this.discordService.sendMessageToChannel(
+              playlist.textChannel.channelId,
+              'La playlist est vide',
+            );
+            delete playlist.currentlyPlaying;
+          }
+        }
+      });
     }
   }
 }
