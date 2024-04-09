@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HelpService } from './help.service';
-import { COMMANDS_AUDIO_PLAYER } from '../../discord-command.type';
+import { COMMANDS_AUDIO_PLAYER } from '../../type/discord-command.type';
 
 describe('HelpService', () => {
   let service: HelpService;

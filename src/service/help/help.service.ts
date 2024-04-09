@@ -3,7 +3,7 @@ import {
   COMMANDS_AUDIO_PLAYER,
   COMMANDS_OTHER,
   COMMANDS_PLAYLIST,
-} from '../../discord-command.type';
+} from '../../type/discord-command.type';
 
 @Injectable()
 export class HelpService {

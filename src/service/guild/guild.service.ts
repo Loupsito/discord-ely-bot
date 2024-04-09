@@ -5,20 +5,7 @@ import {
   joinVoiceChannel,
   VoiceConnection,
 } from '@discordjs/voice';
-
-export interface Playlist {
-  textChannel: any;
-  queue: Music[];
-  currentlyPlaying: Music;
-  isPaused: boolean;
-  isMarkedAsEmpty: boolean;
-  isListenerAttached: boolean;
-}
-
-export interface Music {
-  url: string;
-  title: string;
-}
+import { Playlist } from '../../type/playlist.type';
 
 @Injectable()
 export class GuildService {
@@ -36,20 +23,21 @@ export class GuildService {
     return this.guildAudioPlayers.get(guildId);
   }
 
-  getOrCreateVoiceConnection(
-    guildId: string,
-    channelId: string,
-    adapterCreator: any,
-  ): VoiceConnection {
-    if (!this.guildVoiceConnections.has(guildId)) {
+  getOrCreateVoiceConnection(message): VoiceConnection {
+    if (!this.guildVoiceConnections.has(message.guildId)) {
+      const channelId = message.member.voice.channel.id;
+      const guildId = message.guildId;
+      const adapterCreator =
+        message.member.voice.channel.guild.voiceAdapterCreator;
+
       const connection = joinVoiceChannel({
-        channelId: channelId,
-        guildId: guildId,
-        adapterCreator: adapterCreator,
+        channelId,
+        guildId: message.guildId,
+        adapterCreator,
       });
       this.guildVoiceConnections.set(guildId, connection);
     }
-    return this.guildVoiceConnections.get(guildId);
+    return this.guildVoiceConnections.get(message.guildId);
   }
 
   getOrCreatePlaylist(guildId: string) {

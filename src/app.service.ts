@@ -6,7 +6,7 @@ import {
   COMMANDS_AUDIO_PLAYER,
   COMMANDS_OTHER,
   COMMANDS_PLAYLIST,
-} from './discord-command.type';
+} from './type/discord-command.type';
 import { logCommand } from './infrastructure/discord-commands.interceptor';
 import { HelpService } from './service/help/help.service';
 import { PlaylistService } from './service/playlist/playlist.service';

@@ -9,7 +9,7 @@ import {
 } from '../../util/music-command.utils';
 import { YoutubeService } from '../youtube/youtube-service.service';
 import { DiscordService } from '../discord/discord.service';
-import { COMMANDS_PLAYLIST } from '../../discord-command.type';
+import { COMMANDS_PLAYLIST } from '../../type/discord-command.type';
 
 @Injectable()
 export class PlaylistService {
@@ -29,11 +29,12 @@ export class PlaylistService {
     );
     const urlTrack = await extractUrlFromMessageContent(message);
     const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
-    const videoTitle = await this.youtubeService.getVideoTitle(urlTrack);
+    const audioInfos = await this.youtubeService.getVideoTitle(urlTrack);
 
     playlist.queue.push({
       url: urlTrack,
-      title: videoTitle,
+      title: audioInfos.title,
+      duration: audioInfos.duration,
     });
 
     if (!playlist.textChannel) {
@@ -44,11 +45,13 @@ export class PlaylistService {
 
     if (audioPlayer.state.status !== AudioPlayerStatus.Playing) {
       message.reply(
-        `Ajout à la playlist de **${videoTitle}** et lancement de la lecture`,
+        `Ajout à la playlist de **${audioInfos.title}** - [${audioInfos.duration}] et lancement de la lecture`,
       );
       await this.playNextTrack(message.guildId);
     } else {
-      message.reply(`Ajout à la playlist de **${videoTitle}**`);
+      message.reply(
+        `Ajout à la playlist de **${audioInfos.title} - [${audioInfos.duration}]**`,
+      );
     }
   }
 
@@ -61,6 +64,7 @@ export class PlaylistService {
       const currentTrack = queue[0];
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
+      playlist.queue.shift();
 
       await this.audioPlayerService.play(
         playlist.textChannel,
@@ -76,9 +80,13 @@ export class PlaylistService {
 
     const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
     playlist.queue.shift();
-    await this.playNextTrack(message.guildId);
 
-    message.reply(`Passage à la musique suivante.`);
+    if (playlist.queue.length === 0) {
+      message.reply(`La playlist est actuellement vide`);
+    } else {
+      message.reply(`Passage à la musique suivante.`);
+      await this.playNextTrack(message.guildId);
+    }
   }
 
   async showPlaylist(message) {
@@ -127,8 +135,8 @@ export class PlaylistService {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
     if (playlist.isPaused && playlist.queue.length > 0) {
       playlist.isPaused = false;
-      await this.playNextTrack(guildId);
       message.reply('La playlist reprend.');
+      await this.playNextTrack(guildId);
     } else {
       message.reply('Aucune playlist à reprendre.');
     }
@@ -148,28 +156,26 @@ export class PlaylistService {
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
-    const listener = async (oldState, newState) => {
-      playlist.isListenerAttached = true;
-      if (
-        oldState.status === AudioPlayerStatus.Playing &&
-        newState.status === AudioPlayerStatus.Idle
-      ) {
-        if (playlist.queue.length > 0) {
-          playlist.queue.shift();
-          await this.playNextTrack(guildId);
-        } else if (!playlist.isMarkedAsEmpty) {
-          playlist.isMarkedAsEmpty = true;
-          await this.discordService.sendMessageToChannel(
-            playlist.textChannel.channelId,
-            'La playlist est vide',
-          );
-          delete playlist.currentlyPlaying;
-        }
-      }
-    };
     if (!playlist.isListenerAttached) {
       console.log('=======> ListenerAttached');
-      audioPlayer.on('stateChange', listener);
+      audioPlayer.on('stateChange', async (oldState, newState) => {
+        playlist.isListenerAttached = true;
+        if (
+          oldState.status === AudioPlayerStatus.Playing &&
+          newState.status === AudioPlayerStatus.Idle
+        ) {
+          if (playlist.queue.length > 0) {
+            await this.playNextTrack(guildId);
+          } else if (!playlist.isMarkedAsEmpty) {
+            playlist.isMarkedAsEmpty = true;
+            await this.discordService.sendMessageToChannel(
+              playlist.textChannel.channelId,
+              'La playlist est vide',
+            );
+            delete playlist.currentlyPlaying;
+          }
+        }
+      });
     }
   }
 }

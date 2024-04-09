@@ -4,7 +4,7 @@ import { DiscordService } from './service/discord/discord.service';
 import { AudioPlayerService } from './service/audio-player/audio-player.service';
 import { VoiceConnectionService } from './service/voice-connection/voice-connection-service.service';
 import { HelpService } from './service/help/help.service';
-import { COMMANDS_AUDIO_PLAYER, COMMANDS_OTHER } from './discord-command.type';
+import { COMMANDS_AUDIO_PLAYER, COMMANDS_OTHER } from './type/discord-command.type';
 import { YoutubeService } from './service/youtube/youtube-service.service';
 import { YoutubeModule } from './service/youtube/youtube.module';
 import { discordServiceMock } from './mock/discord-service.mock';

@@ -1,4 +1,4 @@
-import { MUSIC_MESSAGES } from '../discord-messages.type';
+import { MUSIC_MESSAGES } from '../type/discord-messages.type';
 
 export const extractUrlFromMessageContent = (message): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -33,13 +33,13 @@ export const buildMessageToShowPlaylist = (playlist) => {
     const playingStatus = playlist.isPaused
       ? '[⏸️ En pause]'
       : '[▶️ En cours de lecture]';
-    response += `1. ${playlist.currentlyPlaying.title}\n**${playingStatus}**\n\n`;
+    response += `1. ${playlist.currentlyPlaying.title} - [${playlist.currentlyPlaying.duration}]\n**${playingStatus}**\n\n`;
   }
 
   playlist.queue.forEach((track, index) => {
     const displayIndex = index + 1;
     if (index > 0 || !playlist.currentlyPlaying) {
-      response += `${displayIndex}. ${track.title}\n`;
+      response += `${displayIndex}. ${track.title} - [${track.duration}]\n`;
     }
   });
 
