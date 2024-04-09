@@ -3,7 +3,7 @@ import { AudioPlayerService } from './audio-player.service';
 import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
 import { mockMessage } from '../../mock/message.mock';
 import { YoutubeModule } from '../youtube/youtube.module';
-import { MUSIC_MESSAGES } from '../../discord-messages.type';
+import { MUSIC_MESSAGES } from '../../type/discord-messages.type';
 import { GuildModule } from '../guild/guild.module';
 import { GuildService } from '../guild/guild.service';
 import { PlaylistService } from '../playlist/playlist.service';

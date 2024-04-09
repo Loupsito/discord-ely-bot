@@ -8,7 +8,7 @@ import { YoutubeService } from '../youtube/youtube-service.service';
 import {
   GENERIC_MESSAGES,
   VOICE_CHANNEL_MESSAGES,
-} from '../../discord-messages.type';
+} from '../../type/discord-messages.type';
 import { GuildService } from '../guild/guild.service';
 
 @Injectable()

@@ -5,20 +5,7 @@ import {
   joinVoiceChannel,
   VoiceConnection,
 } from '@discordjs/voice';
-
-export interface Playlist {
-  textChannel: any;
-  queue: Music[];
-  currentlyPlaying: Music;
-  isPaused: boolean;
-  isMarkedAsEmpty: boolean;
-  isListenerAttached: boolean;
-}
-
-export interface Music {
-  url: string;
-  title: string;
-}
+import { Playlist } from '../../type/playlist.type';
 
 @Injectable()
 export class GuildService {

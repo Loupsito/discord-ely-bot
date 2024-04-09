@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AudioPlayerStatus } from '@discordjs/voice';
 import { YoutubeService } from '../youtube/youtube-service.service';
 import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
-import { MUSIC_MESSAGES } from '../../discord-messages.type';
+import { MUSIC_MESSAGES } from '../../type/discord-messages.type';
 import { GuildService } from '../guild/guild.service';
 import {
   isYoutubeUrl,
@@ -10,7 +10,7 @@ import {
 } from '../../util/music-command.utils';
 import { DiscordService } from '../discord/discord.service';
 import { PlaylistService } from '../playlist/playlist.service';
-import { COMMANDS_PLAYLIST } from '../../discord-command.type';
+import { COMMANDS_PLAYLIST } from '../../type/discord-command.type';
 
 @Injectable()
 export class AudioPlayerService {
@@ -39,10 +39,10 @@ export class AudioPlayerService {
       );
       this.voiceConnectionService.joinAndPlay(message, url, audioPlayer);
 
-      const videoTitle = await this.youtubeService.getVideoTitle(url);
+      const audioInfos = await this.youtubeService.getVideoTitle(url);
       return this.discordService.sendMessageToChannel(
         message.channelId,
-        `**${MUSIC_MESSAGES.CURRENTLY_PLAYING} :** ${videoTitle}`,
+        `**${MUSIC_MESSAGES.CURRENTLY_PLAYING} :** ${audioInfos.title} - [${audioInfos.duration}] `,
       );
     } catch (error) {
       message.reply(error);
