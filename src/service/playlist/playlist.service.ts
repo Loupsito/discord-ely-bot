@@ -130,8 +130,8 @@ export class PlaylistService {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
     if (playlist.isPaused && playlist.queue.length > 0) {
       playlist.isPaused = false;
-      await this.playNextTrack(guildId);
       message.reply('La playlist reprend.');
+      await this.playNextTrack(guildId);
     } else {
       message.reply('Aucune playlist à reprendre.');
     }
