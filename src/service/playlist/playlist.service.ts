@@ -98,7 +98,7 @@ export class PlaylistService {
     } else {
       let replyMessage = `La playlist est actuellement vide. `;
       if (playlist.currentlyPlaying) {
-        replyMessage += `Mais il reste encore une musique en cours de lecture : \n\n${playlist.currentlyPlaying.title}\n**[▶️ En cours de lecture]**`;
+        replyMessage += `Mais il reste encore une musique en cours de lecture : \n\n${playlist.currentlyPlaying.title} - [${playlist.currentlyPlaying.duration}]\n**[▶️ En cours de lecture]**`;
       }
       message.reply(replyMessage);
     }
