@@ -40,7 +40,7 @@ export class PlaylistService {
       playlist.textChannel = message;
     }
 
-    playlist.isAlreadyMarkedAsEmpty = false;
+    playlist.isMarkedAsEmpty = false;
 
     if (audioPlayer.state.status !== AudioPlayerStatus.Playing) {
       message.reply(
@@ -147,17 +147,18 @@ export class PlaylistService {
   }
 
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
-    audioPlayer.on('stateChange', async (oldState, newState) => {
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
+    const listener = async (oldState, newState) => {
+      playlist.isListenerAttached = true;
       if (
         oldState.status === AudioPlayerStatus.Playing &&
         newState.status === AudioPlayerStatus.Idle
       ) {
-        const playlist = this.guildService.getOrCreatePlaylist(guildId);
         if (playlist.queue.length > 0) {
           playlist.queue.shift();
           await this.playNextTrack(guildId);
-        } else if (!playlist.isAlreadyMarkedAsEmpty) {
-          playlist.isAlreadyMarkedAsEmpty = true;
+        } else if (!playlist.isMarkedAsEmpty) {
+          playlist.isMarkedAsEmpty = true;
           await this.discordService.sendMessageToChannel(
             playlist.textChannel.channelId,
             'La playlist est vide',
@@ -165,6 +166,10 @@ export class PlaylistService {
           delete playlist.currentlyPlaying;
         }
       }
-    });
+    };
+    if (!playlist.isListenerAttached) {
+      console.log('=======> ListenerAttached');
+      audioPlayer.on('stateChange', listener);
+    }
   }
 }
