@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { AudioPlayer, AudioPlayerStatus } from '@discordjs/voice';
 import { GuildService } from '../guild/guild.service';
 import { AudioPlayerService } from '../audio-player/audio-player.service';
@@ -13,6 +13,8 @@ import { COMMANDS_PLAYLIST } from '../../type/discord-command.type';
 
 @Injectable()
 export class PlaylistService {
+  private logger = new Logger('AppService');
+
   constructor(
     private guildService: GuildService,
     @Inject(forwardRef(() => AudioPlayerService))
@@ -51,24 +53,6 @@ export class PlaylistService {
     } else {
       message.reply(
         `Ajout à la playlist de **${audioInfos.title} - [${audioInfos.duration}]**`,
-      );
-    }
-  }
-
-  async playNextTrack(guildId: string) {
-    const playlist = this.guildService.getOrCreatePlaylist(guildId);
-    const queue = playlist.queue;
-    const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
-
-    if (playlist && queue.length > 0 && !playlist.isPaused) {
-      const currentTrack = queue[0];
-      playlist.currentlyPlaying = currentTrack;
-      this.attachTrackEndListener(audioPlayer, guildId);
-
-      await this.audioPlayerService.play(
-        playlist.textChannel,
-        currentTrack.url,
-        true,
       );
     }
   }
@@ -153,10 +137,28 @@ export class PlaylistService {
     });
   }
 
+  private async playNextTrack(guildId: string) {
+    const playlist = this.guildService.getOrCreatePlaylist(guildId);
+    const queue = playlist.queue;
+    const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
+
+    if (playlist && queue.length > 0 && !playlist.isPaused) {
+      const currentTrack = queue[0];
+      playlist.currentlyPlaying = currentTrack;
+      this.attachTrackEndListener(audioPlayer, guildId);
+
+      await this.audioPlayerService.play(
+        playlist.textChannel,
+        currentTrack.url,
+        true,
+      );
+    }
+  }
+
   private attachTrackEndListener(audioPlayer: AudioPlayer, guildId: string) {
     const playlist = this.guildService.getOrCreatePlaylist(guildId);
     if (!playlist.isListenerAttached) {
-      console.log('=======> ListenerAttached');
+      this.logger.debug('=======> ListenerAttached');
       audioPlayer.on('stateChange', async (oldState, newState) => {
         playlist.isListenerAttached = true;
         if (
@@ -171,6 +173,7 @@ export class PlaylistService {
           }
 
           if (playlist.queue.length === 0 && !playlist.isMarkedAsEmpty) {
+            this.logger.debug('=======> La playlist est vide');
             playlist.isMarkedAsEmpty = true;
             await this.discordService.sendMessageToChannel(
               playlist.textChannel.channelId,
