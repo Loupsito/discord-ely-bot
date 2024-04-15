@@ -12,8 +12,7 @@ export class GuildService {
   private guildAudioPlayers = new Map<string, AudioPlayer>();
   private guildVoiceConnections = new Map<string, VoiceConnection>();
   private guildPlaylists = new Map<string, Playlist>();
-
-  constructor() {}
+  private guildChannelIdWhereBotInvoked = new Map<string, string>();
 
   getOrCreateAudioPlayer(guildId: string): AudioPlayer {
     if (!this.guildAudioPlayers.has(guildId)) {
@@ -40,6 +39,10 @@ export class GuildService {
     return this.guildVoiceConnections.get(message.guildId);
   }
 
+  getVoiceConnection(guildId: string): VoiceConnection {
+    return this.guildVoiceConnections.get(guildId);
+  }
+
   getOrCreatePlaylist(guildId: string) {
     if (!this.guildPlaylists.has(guildId)) {
       const newPlaylist: Playlist = {
@@ -55,9 +58,18 @@ export class GuildService {
     return this.guildPlaylists.get(guildId);
   }
 
+  getChannelIdWhereBotInvoked(guildId: string): string {
+    return this.guildChannelIdWhereBotInvoked.get(guildId);
+  }
+
+  storeChannelIdWhereBotInvoked(guildId: string, channelId: string) {
+    this.guildChannelIdWhereBotInvoked.set(guildId, channelId);
+  }
+
   purgeAll(guildId: string) {
     this.guildVoiceConnections.delete(guildId);
     this.guildPlaylists.delete(guildId);
     this.guildAudioPlayers.delete(guildId);
+    this.guildChannelIdWhereBotInvoked.delete(guildId);
   }
 }

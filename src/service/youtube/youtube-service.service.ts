@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as ytdl from 'ytdl-core';
 import { Audio, AudioInfos } from '../../type/audio.type';
+import { toMinutesAndSeconds } from '../../util/time.utils';
 
 @Injectable()
 export class YoutubeService {
@@ -11,7 +12,7 @@ export class YoutubeService {
       const info = await ytdl.getInfo(url);
       return {
         title: info.videoDetails.title,
-        duration: this.toMinutesAndSeconds(
+        duration: toMinutesAndSeconds(
           parseInt(info.videoDetails.lengthSeconds),
         ),
       };
@@ -38,11 +39,5 @@ export class YoutubeService {
         },
       },
     });
-  }
-
-  private toMinutesAndSeconds(duration: number): string {
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration - minutes * 60;
-    return `${minutes} min : ${seconds} sec`;
   }
 }
