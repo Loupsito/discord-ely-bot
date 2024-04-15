@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DiscordService } from './discord.service';
 import { ConfigService } from '@nestjs/config';
 import { Client, GatewayIntentBits } from 'discord.js';
+import { GuildModule } from '../guild/guild.module';
 
 jest.mock('discord.js', () => {
   return {
@@ -24,6 +25,7 @@ describe('DiscordService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [GuildModule],
       providers: [
         DiscordService,
         {
