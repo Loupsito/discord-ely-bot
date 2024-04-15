@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   AudioPlayer,
   createAudioResource,
@@ -10,12 +10,18 @@ import {
   VOICE_CHANNEL_MESSAGES,
 } from '../../type/discord-messages.type';
 import { GuildService } from '../guild/guild.service';
+import { DiscordService } from '../discord/discord.service';
 
 @Injectable()
 export class VoiceConnectionService {
+  private logger = new Logger('VoiceConnectionService');
+  private disconnectTimeouts = new Map();
+  private TIMEOUT_DURATION = 5000;
+
   constructor(
     private youtubeService: YoutubeService,
     private guildService: GuildService,
+    private discordService: DiscordService,
   ) {}
 
   joinAndPlay(message: any, url: string, player: AudioPlayer) {
@@ -40,6 +46,55 @@ export class VoiceConnectionService {
       message.reply(GENERIC_MESSAGES.BYE);
     } else {
       return message.reply(VOICE_CHANNEL_MESSAGES.BOT_MUST_BE_IN_VOICE_CHANNEL);
+    }
+  }
+
+  async onModuleInit() {
+    this.discordService.discordClient.on(
+      'voiceStateUpdate',
+      (oldState, newState) => {
+        // Vérifie si un membre quitte un canal vocal
+        if (oldState.channelId && !newState.channelId) {
+          this.checkChannelEmpty(oldState.channel);
+        }
+        // Vérifie si un membre rejoint un canal vocal et annule la déconnexion si nécessaire
+        else if (!oldState.channelId && newState.channelId) {
+          this.cancelDisconnectIfScheduled(newState.channel);
+        }
+      },
+    );
+  }
+
+  private checkChannelEmpty(channel) {
+    if (
+      channel.members.size === 1 &&
+      channel.members.has(this.discordService.discordClient.user.id)
+    ) {
+      const timeout = setTimeout(() => {
+        if (
+          channel.members.size === 1 &&
+          channel.members.has(this.discordService.discordClient.user.id)
+        ) {
+          const voiceConnection = this.guildService.getVoiceConnection(
+            channel.guild.id,
+          );
+          if (voiceConnection) {
+            voiceConnection.disconnect();
+            this.logger.log(
+              'Bot auto-disconnected due to no members in the voice channel.',
+            );
+          }
+          this.disconnectTimeouts.delete(channel.id);
+        }
+      }, this.TIMEOUT_DURATION);
+      this.disconnectTimeouts.set(channel.id, timeout);
+    }
+  }
+
+  private cancelDisconnectIfScheduled(channel) {
+    if (this.disconnectTimeouts.has(channel.id)) {
+      clearTimeout(this.disconnectTimeouts.get(channel.id));
+      this.disconnectTimeouts.delete(channel.id);
     }
   }
 }

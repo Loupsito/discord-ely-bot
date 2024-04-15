@@ -13,8 +13,6 @@ export class GuildService {
   private guildVoiceConnections = new Map<string, VoiceConnection>();
   private guildPlaylists = new Map<string, Playlist>();
 
-  constructor() {}
-
   getOrCreateAudioPlayer(guildId: string): AudioPlayer {
     if (!this.guildAudioPlayers.has(guildId)) {
       const audioPlayer = createAudioPlayer();
@@ -38,6 +36,10 @@ export class GuildService {
       this.guildVoiceConnections.set(guildId, connection);
     }
     return this.guildVoiceConnections.get(message.guildId);
+  }
+
+  getVoiceConnection(guildId: string): VoiceConnection {
+    return this.guildVoiceConnections.get(guildId);
   }
 
   getOrCreatePlaylist(guildId: string) {
