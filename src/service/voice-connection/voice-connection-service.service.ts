@@ -94,7 +94,7 @@ export class VoiceConnectionService {
             this.guildService.purgeAll(channel.guild.id);
             voiceConnection.disconnect();
 
-            const autoDisconnectMessage: string = `🔌 Le robot s'est déconnecté automatiquement car il n'y avait aucun membre dans le canal vocal.`;
+            const autoDisconnectMessage: string = `🔌 Le bot s'est déconnecté automatiquement car il n'y avait aucun membre dans le canal vocal.`;
             this.logger.log(autoDisconnectMessage);
             await this.discordService.sendMessageToChannel(
               channelIdToSendMessage,
