@@ -11,12 +11,13 @@ import {
 } from '../../type/discord-messages.type';
 import { GuildService } from '../guild/guild.service';
 import { DiscordService } from '../discord/discord.service';
+import { toMinutesAndSeconds } from '../../util/time.utils';
 
 @Injectable()
 export class VoiceConnectionService {
   private logger = new Logger('VoiceConnectionService');
   private disconnectTimeouts = new Map();
-  private TIMEOUT_DURATION = 5000;
+  private TIMEOUT_DURATION = 60 * 1000 * 2;
 
   constructor(
     private youtubeService: YoutubeService,
@@ -65,12 +66,22 @@ export class VoiceConnectionService {
     );
   }
 
-  private checkChannelEmpty(channel) {
+  private async checkChannelEmpty(channel) {
     if (
       channel.members.size === 1 &&
       channel.members.has(this.discordService.discordClient.user.id)
     ) {
-      const timeout = setTimeout(() => {
+      const channelIdToSendMessage =
+        this.guildService.getChannelIdWhereBotInvoked(channel.guild.id);
+      const warningMessage = `⚠️Le bot se déconnectera automatiquement dans ${toMinutesAndSeconds(this.TIMEOUT_DURATION / 1000)}. Raison : plus aucun membre dans le canal vocal.\nCette auto déconnexion s'annulera si au moins un membre se reconnecte`;
+
+      this.logger.log(warningMessage);
+      await this.discordService.sendMessageToChannel(
+        channelIdToSendMessage,
+        warningMessage,
+      );
+
+      const timeout = setTimeout(async () => {
         if (
           channel.members.size === 1 &&
           channel.members.has(this.discordService.discordClient.user.id)
@@ -78,10 +89,16 @@ export class VoiceConnectionService {
           const voiceConnection = this.guildService.getVoiceConnection(
             channel.guild.id,
           );
+
           if (voiceConnection) {
+            this.guildService.purgeAll(channel.guild.id);
             voiceConnection.disconnect();
-            this.logger.log(
-              'Bot auto-disconnected due to no members in the voice channel.',
+
+            const autoDisconnectMessage: string = `🔌 Le robot s'est déconnecté automatiquement car il n'y avait aucun membre dans le canal vocal.`;
+            this.logger.log(autoDisconnectMessage);
+            await this.discordService.sendMessageToChannel(
+              channelIdToSendMessage,
+              autoDisconnectMessage,
             );
           }
           this.disconnectTimeouts.delete(channel.id);

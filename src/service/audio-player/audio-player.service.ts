@@ -26,6 +26,10 @@ export class AudioPlayerService {
   public async play(message, urlGiven?: string, fromPlaylist: boolean = false) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
+      this.guildService.storeChannelIdWhereBotInvoked(
+        message.guildId,
+        message.channelId,
+      );
 
       if (!fromPlaylist) {
         await this.playlistService.pauseCurrentPlaylistIfNeeded(message);
