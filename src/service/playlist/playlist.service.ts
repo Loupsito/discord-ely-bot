@@ -142,7 +142,15 @@ export class PlaylistService {
     const queue = playlist.queue;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
-    if (playlist && queue.length > 0 && !playlist.isPaused) {
+    if (playlist.isPaused) {
+      playlist.isPaused = false;
+      await this.discordService.sendMessageToChannel(
+        playlist.textChannel.channelId,
+        '🔔 Reprise de la playlist',
+      );
+    }
+
+    if (playlist && queue.length > 0) {
       const currentTrack = queue[0];
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
