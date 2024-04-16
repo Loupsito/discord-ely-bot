@@ -23,38 +23,25 @@ export class AppService {
   ) {}
 
   async onModuleInit() {
-    this.discordService.discordClient.on(
-      'messageCreate',
-      this.handleMessageCreate.bind(this),
-    );
+    this.discordService.discordClient.on('messageCreate', this.handleMessageCreate.bind(this));
   }
 
   async handleMessageCreate(message) {
     const commandActions = {
-      [COMMANDS_AUDIO_PLAYER.PLAY.trigger]: () =>
-        this.audioPlayerService.play(message),
-      [COMMANDS_AUDIO_PLAYER.STOP.trigger]: () =>
-        this.audioPlayerService.stop(message),
-      [COMMANDS_AUDIO_PLAYER.PAUSE.trigger]: () =>
-        this.audioPlayerService.pause(message),
-      [COMMANDS_AUDIO_PLAYER.RESUME.trigger]: () =>
-        this.audioPlayerService.resume(message),
+      [COMMANDS_AUDIO_PLAYER.PLAY.trigger]: () => this.audioPlayerService.play(message),
+      [COMMANDS_AUDIO_PLAYER.STOP.trigger]: () => this.audioPlayerService.stop(message),
+      [COMMANDS_AUDIO_PLAYER.PAUSE.trigger]: () => this.audioPlayerService.pause(message),
+      [COMMANDS_AUDIO_PLAYER.RESUME.trigger]: () => this.audioPlayerService.resume(message),
 
-      [COMMANDS_PLAYLIST.ADD.trigger]: () =>
-        this.playlistService.addTrackToPlaylist(message),
-      [COMMANDS_PLAYLIST.PLAYLIST.trigger]: () =>
-        this.playlistService.showPlaylist(message),
-      [COMMANDS_PLAYLIST.EMPTY.trigger]: () =>
-        this.playlistService.emptyPlaylist(message),
-      [COMMANDS_PLAYLIST.NEXT.trigger]: () =>
-        this.playlistService.moveToNextTrack(message),
+      [COMMANDS_PLAYLIST.ADD.trigger]: () => this.playlistService.addTrackToPlaylist(message),
+      [COMMANDS_PLAYLIST.PLAYLIST.trigger]: () => this.playlistService.showPlaylist(message),
+      [COMMANDS_PLAYLIST.EMPTY.trigger]: () => this.playlistService.emptyPlaylist(message),
+      [COMMANDS_PLAYLIST.NEXT.trigger]: () => this.playlistService.moveToNextTrack(message),
       [COMMANDS_PLAYLIST.RESUMEPLAYLIST.trigger]: () =>
         this.playlistService.resumePlaylist(message),
 
-      [COMMANDS_OTHER.DISCONNECT.trigger]: () =>
-        this.voiceConnectionService.disconnect(message),
-      [COMMANDS_OTHER.HELP.trigger]: () =>
-        this.helpService.listAllCommands(message),
+      [COMMANDS_OTHER.DISCONNECT.trigger]: () => this.voiceConnectionService.disconnect(message),
+      [COMMANDS_OTHER.HELP.trigger]: () => this.helpService.listAllCommands(message),
     };
 
     const command = message.content.split(' ')[0];

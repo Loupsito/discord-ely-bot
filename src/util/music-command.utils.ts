@@ -30,9 +30,7 @@ export const buildMessageToShowPlaylist = (playlist) => {
   let response = '**Playlist Actuelle:**\n';
 
   if (playlist.currentlyPlaying) {
-    const playingStatus = playlist.isPaused
-      ? '[⏸️ En pause]'
-      : '[▶️ En cours de lecture]';
+    const playingStatus = playlist.isPaused ? '[⏸️ En pause]' : '[▶️ En cours de lecture]';
     response += `1. ${playlist.currentlyPlaying.title} - [${playlist.currentlyPlaying.duration}]\n**${playingStatus}**\n\n`;
   }
 

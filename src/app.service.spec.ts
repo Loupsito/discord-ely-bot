@@ -46,9 +46,7 @@ describe('AppService', () => {
     appService = module.get<AppService>(AppService);
     discordService = module.get<DiscordService>(DiscordService);
     audioPlayerService = module.get<AudioPlayerService>(AudioPlayerService);
-    voiceConnectionService = module.get<VoiceConnectionService>(
-      VoiceConnectionService,
-    );
+    voiceConnectionService = module.get<VoiceConnectionService>(VoiceConnectionService);
     helpService = module.get<HelpService>(HelpService);
   });
 

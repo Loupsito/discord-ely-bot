@@ -1,14 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  AudioPlayer,
-  createAudioResource,
-  VoiceConnectionStatus,
-} from '@discordjs/voice';
+import { AudioPlayer, createAudioResource, VoiceConnectionStatus } from '@discordjs/voice';
 import { YoutubeService } from '../youtube/youtube-service.service';
-import {
-  GENERIC_MESSAGES,
-  VOICE_CHANNEL_MESSAGES,
-} from '../../type/discord-messages.type';
+import { GENERIC_MESSAGES, VOICE_CHANNEL_MESSAGES } from '../../type/discord-messages.type';
 import { GuildService } from '../guild/guild.service';
 import { DiscordService } from '../discord/discord.service';
 import { toMinutesAndSeconds } from '../../util/time.utils';
@@ -26,8 +19,7 @@ export class VoiceConnectionService {
   ) {}
 
   joinAndPlay(message: any, url: string, player: AudioPlayer) {
-    const voiceConnection =
-      this.guildService.getOrCreateVoiceConnection(message);
+    const voiceConnection = this.guildService.getOrCreateVoiceConnection(message);
     const stream = this.youtubeService.getStream(url);
     const resource = createAudioResource(stream);
     player.play(resource);
@@ -35,13 +27,9 @@ export class VoiceConnectionService {
   }
 
   disconnect(message) {
-    const voiceConnection =
-      this.guildService.getOrCreateVoiceConnection(message);
+    const voiceConnection = this.guildService.getOrCreateVoiceConnection(message);
 
-    if (
-      voiceConnection &&
-      voiceConnection.state.status !== VoiceConnectionStatus.Disconnected
-    ) {
+    if (voiceConnection && voiceConnection.state.status !== VoiceConnectionStatus.Disconnected) {
       voiceConnection.destroy();
       this.guildService.purgeAll(message.guildId);
       message.reply(GENERIC_MESSAGES.BYE);
@@ -51,19 +39,16 @@ export class VoiceConnectionService {
   }
 
   async onModuleInit() {
-    this.discordService.discordClient.on(
-      'voiceStateUpdate',
-      (oldState, newState) => {
-        // Vérifie si un membre quitte un canal vocal
-        if (oldState.channelId && !newState.channelId) {
-          this.checkChannelEmpty(oldState.channel);
-        }
-        // Vérifie si un membre rejoint un canal vocal et annule la déconnexion si nécessaire
-        else if (!oldState.channelId && newState.channelId) {
-          this.cancelDisconnectIfScheduled(newState.channel);
-        }
-      },
-    );
+    this.discordService.discordClient.on('voiceStateUpdate', (oldState, newState) => {
+      // Vérifie si un membre quitte un canal vocal
+      if (oldState.channelId && !newState.channelId) {
+        this.checkChannelEmpty(oldState.channel);
+      }
+      // Vérifie si un membre rejoint un canal vocal et annule la déconnexion si nécessaire
+      else if (!oldState.channelId && newState.channelId) {
+        this.cancelDisconnectIfScheduled(newState.channel);
+      }
+    });
   }
 
   private async checkChannelEmpty(channel) {
@@ -71,24 +56,20 @@ export class VoiceConnectionService {
       channel.members.size === 1 &&
       channel.members.has(this.discordService.discordClient.user.id)
     ) {
-      const channelIdToSendMessage =
-        this.guildService.getChannelIdWhereBotInvoked(channel.guild.id);
+      const channelIdToSendMessage = this.guildService.getChannelIdWhereBotInvoked(
+        channel.guild.id,
+      );
       const warningMessage = `⚠️Le bot se déconnectera automatiquement dans ${toMinutesAndSeconds(this.TIMEOUT_DURATION / 1000)}. Raison : plus aucun membre dans le canal vocal.\nCette auto déconnexion s'annulera si au moins un membre se reconnecte`;
 
       this.logger.log(warningMessage);
-      await this.discordService.sendMessageToChannel(
-        channelIdToSendMessage,
-        warningMessage,
-      );
+      await this.discordService.sendMessageToChannel(channelIdToSendMessage, warningMessage);
 
       const timeout = setTimeout(async () => {
         if (
           channel.members.size === 1 &&
           channel.members.has(this.discordService.discordClient.user.id)
         ) {
-          const voiceConnection = this.guildService.getVoiceConnection(
-            channel.guild.id,
-          );
+          const voiceConnection = this.guildService.getVoiceConnection(channel.guild.id);
 
           if (voiceConnection) {
             this.guildService.purgeAll(channel.guild.id);

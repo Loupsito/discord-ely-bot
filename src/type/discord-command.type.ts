@@ -10,10 +10,7 @@ type CommandPlaylist = 'ADD' | 'PLAYLIST' | 'EMPTY' | 'NEXT' | 'RESUMEPLAYLIST';
 
 type CommandOther = 'DISCONNECT' | 'HELP';
 
-export const COMMANDS_AUDIO_PLAYER: Record<
-  CommandAudioPlayer,
-  DiscordCommandType
-> = {
+export const COMMANDS_AUDIO_PLAYER: Record<CommandAudioPlayer, DiscordCommandType> = {
   PLAY: {
     trigger: '!play',
     description: `Commande qui permet de jouer une musique venant de Youtube. Si une playlist est en cours de lecture, cette commande va mettre en pause cette dernière.`,
@@ -65,8 +62,7 @@ export const COMMANDS_PLAYLIST: Record<CommandPlaylist, DiscordCommandType> = {
 export const COMMANDS_OTHER: Record<CommandOther, DiscordCommandType> = {
   DISCONNECT: {
     trigger: '!disconnect',
-    description:
-      'Commande qui permet de déconnecter le bot se trouvant dans un channel vocal.',
+    description: 'Commande qui permet de déconnecter le bot se trouvant dans un channel vocal.',
     example: '!disconnect',
   },
   HELP: {

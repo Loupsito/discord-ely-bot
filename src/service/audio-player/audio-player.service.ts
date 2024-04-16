@@ -4,10 +4,7 @@ import { YoutubeService } from '../youtube/youtube-service.service';
 import { VoiceConnectionService } from '../voice-connection/voice-connection-service.service';
 import { MUSIC_MESSAGES } from '../../type/discord-messages.type';
 import { GuildService } from '../guild/guild.service';
-import {
-  isYoutubeUrl,
-  replyErrorMessageIfNotInVoiceChannel,
-} from '../../util/music-command.utils';
+import { isYoutubeUrl, replyErrorMessageIfNotInVoiceChannel } from '../../util/music-command.utils';
 import { DiscordService } from '../discord/discord.service';
 import { PlaylistService } from '../playlist/playlist.service';
 import { COMMANDS_PLAYLIST } from '../../type/discord-command.type';
@@ -26,21 +23,14 @@ export class AudioPlayerService {
   public async play(message, urlGiven?: string, fromPlaylist: boolean = false) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
-      this.guildService.storeChannelIdWhereBotInvoked(
-        message.guildId,
-        message.channelId,
-      );
+      this.guildService.storeChannelIdWhereBotInvoked(message.guildId, message.channelId);
 
       if (!fromPlaylist) {
         await this.playlistService.pauseCurrentPlaylistIfNeeded(message);
       }
 
-      const url = urlGiven
-        ? urlGiven
-        : await this.extractUrlFromMessageContent(message);
-      const audioPlayer = this.guildService.getOrCreateAudioPlayer(
-        message.guildId,
-      );
+      const url = urlGiven ? urlGiven : await this.extractUrlFromMessageContent(message);
+      const audioPlayer = this.guildService.getOrCreateAudioPlayer(message.guildId);
       this.voiceConnectionService.joinAndPlay(message, url, audioPlayer);
 
       const audioInfos = await this.youtubeService.getVideoTitle(url);
@@ -56,18 +46,14 @@ export class AudioPlayerService {
   public async stop(message: any) {
     try {
       await replyErrorMessageIfNotInVoiceChannel(message);
-      const audioPlayer = this.guildService.getOrCreateAudioPlayer(
-        message.guildId,
-      );
+      const audioPlayer = this.guildService.getOrCreateAudioPlayer(message.guildId);
       let replyMessage = '';
 
       if (audioPlayer.state.status !== AudioPlayerStatus.Idle) {
         audioPlayer.stop();
         replyMessage += MUSIC_MESSAGES.MUSIC_STOPPED;
       } else {
-        return message.reply(
-          `Aucune musique ou playlist n'est en cours de lecture`,
-        );
+        return message.reply(`Aucune musique ou playlist n'est en cours de lecture`);
       }
 
       const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
@@ -96,9 +82,7 @@ export class AudioPlayerService {
       audioPlayer.pause();
       message.reply('La musique a été mise en pause.');
     } else {
-      message.reply(
-        "Aucune musique n'est actuellement en lecture pour être mise en pause",
-      );
+      message.reply("Aucune musique n'est actuellement en lecture pour être mise en pause");
     }
   }
 

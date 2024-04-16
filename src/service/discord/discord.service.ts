@@ -37,10 +37,7 @@ export class DiscordService implements OnModuleInit {
         console.error("Le canal trouvé n'est pas un canal de texte.");
       }
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération du canal ou de l'envoi du message:",
-        error,
-      );
+      console.error("Erreur lors de la récupération du canal ou de l'envoi du message:", error);
     }
   }
 

@@ -14,22 +14,13 @@ export class HelpService {
       `📻 Commandes lecteur audio`,
       COMMANDS_AUDIO_PLAYER,
     );
-    helpMessage += this.buildMessageToListCommands(
-      `💿 Commandes playlist`,
-      COMMANDS_PLAYLIST,
-    );
-    helpMessage += this.buildMessageToListCommands(
-      `🔰 Autres commandes`,
-      COMMANDS_OTHER,
-    );
+    helpMessage += this.buildMessageToListCommands(`💿 Commandes playlist`, COMMANDS_PLAYLIST);
+    helpMessage += this.buildMessageToListCommands(`🔰 Autres commandes`, COMMANDS_OTHER);
 
     message.reply(helpMessage);
   }
 
-  private buildMessageToListCommands(
-    title: string,
-    Commands: Record<any, any>,
-  ) {
+  private buildMessageToListCommands(title: string, Commands: Record<any, any>) {
     let helpMessage = `**--------------------${title}--------------------**\n\n`;
     for (const commandKey of Object.keys(Commands)) {
       const command = Commands[commandKey];

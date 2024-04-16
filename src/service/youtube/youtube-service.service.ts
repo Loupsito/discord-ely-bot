@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as ytdl from 'ytdl-core';
-import { Audio, AudioInfos } from '../../type/audio.type';
+import { AudioInfos } from '../../type/audio.type';
 import { toMinutesAndSeconds } from '../../util/time.utils';
 
 @Injectable()
@@ -12,9 +12,7 @@ export class YoutubeService {
       const info = await ytdl.getInfo(url);
       return {
         title: info.videoDetails.title,
-        duration: toMinutesAndSeconds(
-          parseInt(info.videoDetails.lengthSeconds),
-        ),
+        duration: toMinutesAndSeconds(parseInt(info.videoDetails.lengthSeconds)),
       };
     } catch (error) {
       this.logger.error('Error fetching video title:', error);

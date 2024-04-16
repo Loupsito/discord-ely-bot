@@ -39,9 +39,7 @@ describe('AudioPlayerService', () => {
     }).compile();
 
     service = module.get<AudioPlayerService>(AudioPlayerService);
-    voiceConnectionService = module.get<VoiceConnectionService>(
-      VoiceConnectionService,
-    );
+    voiceConnectionService = module.get<VoiceConnectionService>(VoiceConnectionService);
     discordService = module.get<DiscordService>(DiscordService);
   });
 
@@ -50,19 +48,12 @@ describe('AudioPlayerService', () => {
       const url = 'https://www.youtube.com/';
       const videoTitle = 'Video Title';
       const spyJoinAndPlay = jest.spyOn(voiceConnectionService, 'joinAndPlay');
-      const spySendMessageToChannel = jest.spyOn(
-        discordService,
-        'sendMessageToChannel',
-      );
+      const spySendMessageToChannel = jest.spyOn(discordService, 'sendMessageToChannel');
       const message = mockMessage(`!play ${url}`);
 
       await service.play(message);
 
-      expect(spyJoinAndPlay).toHaveBeenCalledWith(
-        message,
-        url,
-        expect.anything(),
-      );
+      expect(spyJoinAndPlay).toHaveBeenCalledWith(message, url, expect.anything());
       expect(spySendMessageToChannel).toHaveBeenCalledWith(
         'channelId',
         expect.stringContaining(videoTitle),

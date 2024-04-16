@@ -26,9 +26,7 @@ export class PlaylistService {
   public async addTrackToPlaylist(message) {
     await replyErrorMessageIfNotInVoiceChannel(message);
 
-    const audioPlayer = this.guildService.getOrCreateAudioPlayer(
-      message.guildId,
-    );
+    const audioPlayer = this.guildService.getOrCreateAudioPlayer(message.guildId);
     const urlTrack = await extractUrlFromMessageContent(message);
     const playlist = this.guildService.getOrCreatePlaylist(message.guildId);
     const audioInfos = await this.youtubeService.getVideoTitle(urlTrack);
@@ -51,9 +49,7 @@ export class PlaylistService {
       );
       await this.playNextTrack(message.guildId);
     } else {
-      message.reply(
-        `Ajout à la playlist de **${audioInfos.title} - [${audioInfos.duration}]**`,
-      );
+      message.reply(`Ajout à la playlist de **${audioInfos.title} - [${audioInfos.duration}]**`);
     }
   }
 
@@ -155,11 +151,7 @@ export class PlaylistService {
       playlist.currentlyPlaying = currentTrack;
       this.attachTrackEndListener(audioPlayer, guildId);
 
-      await this.audioPlayerService.play(
-        playlist.textChannel,
-        currentTrack.url,
-        true,
-      );
+      await this.audioPlayerService.play(playlist.textChannel, currentTrack.url, true);
     }
   }
 

@@ -26,8 +26,7 @@ export class GuildService {
     if (!this.guildVoiceConnections.has(message.guildId)) {
       const channelId = message.member.voice.channel.id;
       const guildId = message.guildId;
-      const adapterCreator =
-        message.member.voice.channel.guild.voiceAdapterCreator;
+      const adapterCreator = message.member.voice.channel.guild.voiceAdapterCreator;
 
       const connection = joinVoiceChannel({
         channelId,
