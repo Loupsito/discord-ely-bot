@@ -104,7 +104,7 @@ export class PlaylistService {
       playlist.isPaused = true;
       await this.discordService.sendMessageToChannel(
         playlist.textChannel.channelId,
-        `La playlist a été mis en pause.\n. Elle reprendra automatiquement après la fin de la musique lancé par la commande !play.\nOu alors vous pourrez reprendre la lecture de la playlist avec la commande **${COMMANDS_PLAYLIST.RESUMEPLAYLIST.trigger}**`,
+        `La playlist a été mis en pause.\nElle reprendra automatiquement après la fin de la musique lancé par la commande **!play**.\nOu alors vous pourrez reprendre la lecture de la playlist avec la commande **${COMMANDS_PLAYLIST.RESUMEPLAYLIST.trigger}**`,
       );
     }
   }
