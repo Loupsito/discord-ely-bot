@@ -13,7 +13,7 @@ type CommandOther = 'DISCONNECT' | 'HELP';
 export const COMMANDS_AUDIO_PLAYER: Record<CommandAudioPlayer, DiscordCommandType> = {
   PLAY: {
     trigger: '!play',
-    description: `Commande qui permet de jouer une musique venant de Youtube. Si une playlist est en cours de lecture, cette commande va mettre en pause cette dernière.`,
+    description: `Commande qui permet de jouer une musique venant de Youtube. Si une playlist est en cours de lecture, cette dernière se mettra en pause et se relancera automatiquement à la fin de la musique lancé par la commande !play.`,
     example: '!play <youtube-url>',
   },
   STOP: {
@@ -55,7 +55,7 @@ export const COMMANDS_PLAYLIST: Record<CommandPlaylist, DiscordCommandType> = {
   },
   RESUMEPLAYLIST: {
     trigger: '!resumePlaylist',
-    description: `Commande qui permet de reprendre la lecture de la playlist précédemment mis en pause`,
+    description: `Commande qui permet de reprendre directement la lecture de la playlist précédemment mis en pause`,
     example: '!resumePlaylist',
   },
 };
