@@ -138,14 +138,6 @@ export class PlaylistService {
     const queue = playlist.queue;
     const audioPlayer = this.guildService.getOrCreateAudioPlayer(guildId);
 
-    if (playlist.isPaused) {
-      playlist.isPaused = false;
-      await this.discordService.sendMessageToChannel(
-        playlist.textChannel.channelId,
-        '🔔 Reprise de la playlist',
-      );
-    }
-
     if (playlist && queue.length > 0) {
       const currentTrack = queue[0];
       playlist.currentlyPlaying = currentTrack;
@@ -166,7 +158,15 @@ export class PlaylistService {
           newState.status === AudioPlayerStatus.Idle
         ) {
           if (playlist.queue.length > 0) {
-            playlist.queue.shift();
+            if (playlist.isPaused) {
+              playlist.isPaused = false;
+              await this.discordService.sendMessageToChannel(
+                playlist.textChannel.channelId,
+                '🔔 Reprise de la playlist',
+              );
+            } else {
+              playlist.queue.shift();
+            }
             await this.playNextTrack(guildId);
           } else if (playlist.queue.length === 1) {
             playlist.queue.shift();
