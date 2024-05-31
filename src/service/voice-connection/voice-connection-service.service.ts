@@ -56,14 +56,6 @@ export class VoiceConnectionService {
       channel.members.size === 1 &&
       channel.members.has(this.discordService.discordClient.user.id)
     ) {
-      const channelIdToSendMessage = this.guildService.getChannelIdWhereBotInvoked(
-        channel.guild.id,
-      );
-      const warningMessage = `⚠️Le bot se déconnectera automatiquement dans ${toMinutesAndSeconds(this.TIMEOUT_DURATION / 1000)}. Raison : plus aucun membre dans le canal vocal.\nCette auto déconnexion s'annulera si au moins un membre se reconnecte`;
-
-      this.logger.log(warningMessage);
-      await this.discordService.sendMessageToChannel(channelIdToSendMessage, warningMessage);
-
       const timeout = setTimeout(async () => {
         if (
           channel.members.size === 1 &&
@@ -75,11 +67,8 @@ export class VoiceConnectionService {
             this.guildService.purgeAll(channel.guild.id);
             voiceConnection.disconnect();
 
-            const autoDisconnectMessage: string = `🔌 Le bot s'est déconnecté automatiquement car il n'y avait aucun membre dans le canal vocal.`;
-            this.logger.log(autoDisconnectMessage);
-            await this.discordService.sendMessageToChannel(
-              channelIdToSendMessage,
-              autoDisconnectMessage,
+            this.logger.log(
+              `The bot has automatically disconnected from '${channel.guild.name}' server`,
             );
           }
           this.disconnectTimeouts.delete(channel.id);

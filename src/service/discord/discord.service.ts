@@ -26,7 +26,10 @@ export class DiscordService implements OnModuleInit {
     return this.client;
   }
 
-  async sendMessageToChannel(channelId, messageText) {
+  async sendMessageToChannel(channelId: string, messageText: string) {
+    if (!messageText) {
+      return;
+    }
     try {
       const channel = await this.client.channels.fetch(channelId);
 
