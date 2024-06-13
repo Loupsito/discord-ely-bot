@@ -5,6 +5,7 @@ import { GENERIC_MESSAGES, VOICE_CHANNEL_MESSAGES } from '../../type/discord-mes
 import { GuildService } from '../guild/guild.service';
 import { DiscordService } from '../discord/discord.service';
 import { toMinutesAndSeconds } from '../../util/time.utils';
+import { replyErrorMessageIfNotInVoiceChannel } from '../../util/music-command.utils';
 
 @Injectable()
 export class VoiceConnectionService {
@@ -26,15 +27,20 @@ export class VoiceConnectionService {
     voiceConnection.subscribe(player);
   }
 
-  disconnect(message) {
-    const voiceConnection = this.guildService.getOrCreateVoiceConnection(message);
+  async disconnect(message) {
+    try {
+      await replyErrorMessageIfNotInVoiceChannel(message);
+      const voiceConnection = this.guildService.getOrCreateVoiceConnection(message);
 
-    if (voiceConnection && voiceConnection.state.status !== VoiceConnectionStatus.Disconnected) {
-      voiceConnection.destroy();
-      this.guildService.purgeAll(message.guildId);
-      message.reply(GENERIC_MESSAGES.BYE);
-    } else {
-      return message.reply(VOICE_CHANNEL_MESSAGES.BOT_MUST_BE_IN_VOICE_CHANNEL);
+      if (voiceConnection && voiceConnection.state.status !== VoiceConnectionStatus.Disconnected) {
+        voiceConnection.destroy();
+        this.guildService.purgeAll(message.guildId);
+        message.reply(GENERIC_MESSAGES.BYE);
+      } else {
+        return message.reply(VOICE_CHANNEL_MESSAGES.BOT_MUST_BE_IN_VOICE_CHANNEL);
+      }
+    } catch (error) {
+      message.reply(error);
     }
   }
 
