@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as ytdl from 'ytdl-core';
+import * as ytdl from '@distube/ytdl-core';
 import { AudioInfos } from '../../type/audio.type';
 import { toMinutesAndSeconds } from '../../util/time.utils';
 
